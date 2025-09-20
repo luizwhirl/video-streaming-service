@@ -1,0 +1,137 @@
+[
+  {
+    "tipo": "filme",
+    "titulo": "O Resgate",
+    "genero": "Ação",
+    "classificacao": "16+",
+    "tempo_duracao": 120
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Até o Último Homem",
+    "genero": "Ação",
+    "classificacao": "16+",
+    "tempo_duracao": 140
+  },
+  {
+    "tipo": "serie",
+    "titulo": "The Last of Us",
+    "genero": "Ação",
+    "classificacao": "16+",
+    "tempo_duracao": 50,
+    "episodios": 9,
+    "temporadas": 1
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Vingadores: Ultimato",
+    "genero": "Ação",
+    "classificacao": "12",
+    "tempo_duracao": 181
+  },
+  {
+    "tipo": "serie",
+    "titulo": "The Walking Dead",
+    "genero": "Ação",
+    "classificacao": "16",
+    "tempo_duracao": 42,
+    "episodios": 177,
+    "temporadas": 11
+  },
+  {
+    "tipo": "filme",
+    "titulo": "O auto da Compadecida",
+    "genero": "Comédia",
+    "classificacao": "12",
+    "tempo_duracao": 100
+  },
+  {
+    "tipo": "serie",
+    "titulo": "Brooklyn Nine-Nine",
+    "genero": "Comédia",
+    "classificacao": "12",
+    "tempo_duracao": 22,
+    "episodios": 153,
+    "temporadas": 8
+  },
+  {
+    "tipo": "serie",
+    "titulo": "This Is Us",
+    "genero": "Drama",
+    "classificacao": "14",
+    "tempo_duracao": 43,
+    "episodios": 106,
+    "temporadas": 6
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Oppenheimer",
+    "genero": "Drama",
+    "classificacao": "14",
+    "tempo_duracao": 180
+  },
+  {
+    "tipo": "filme",
+    "titulo": "A Culpa é das Estrelas",
+    "genero": "Romance",
+    "classificacao": "12",
+    "tempo_duracao": 126
+  },
+  {
+    "tipo": "filme",
+    "titulo": "O Telefone Preto",
+    "genero": "Terror",
+    "classificacao": "16",
+    "tempo_duracao": 115
+  },
+  {
+    "tipo": "documentario",
+    "titulo": "O Dilema das Redes",
+    "genero": "Documentário",
+    "classificacao": "12",
+    "tempo_duracao": 94
+  },
+  {
+    "tipo": "anime",
+    "titulo": "Attack on Titan",
+    "genero": "Animação",
+    "classificacao": "16",
+    "tempo_duracao": 24,
+    "episodios": 75,
+    "temporadas": 4
+  },
+  {
+    "tipo": "anime",
+    "titulo": "Naruto Shippuden",
+    "genero": "Animação",
+    "classificacao": "12",
+    "tempo_duracao": 23,
+    "episodios": 220,
+    "temporadas": 20
+  },
+  {
+    "tipo": "serie",
+    "titulo": "Guerra dos Tronos",
+    "genero": "Ação",
+    "classificacao": "18",
+    "tempo_duracao": 60,
+    "episodios": 73,
+    "temporadas": 8
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Harry Potter e a Pedra Filosofal",
+    "genero": "Fantasia",
+    "classificacao": "10",
+    "tempo_duracao": 152
+  },
+  {
+    "tipo": "serie",
+    "titulo": "Pokémon",
+    "genero": "Aventura",
+    "classificacao": "10",
+    "tempo_duracao": 22,
+    "episodios": 1200,
+    "temporadas": 25
+  }
+]

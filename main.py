@@ -302,7 +302,7 @@ def menu_principal(usuario):
             perfil = usuario.obter_perfil_por_nome(nome_perfil)
 
             if perfil:
-                perfil.recomendacoes.recomendar_conteudo(usuario)
+                perfil.recomendacoes.recomendar_conteudo(usuario, perfil)
                 input("\nPressione Enter para continuar...")
             else:
                 print(f"Perfil '{nome_perfil}' não encontrado.")

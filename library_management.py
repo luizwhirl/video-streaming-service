@@ -8,6 +8,7 @@ import time
 from abc import ABC, abstractmethod
 import datetime
 from ads_management import realizar_exibicao_anuncio, redefinir_limite_diario
+import json 
 
 class ConjuntoMidias:
     # Referente a varias midias
@@ -32,6 +33,9 @@ class ConjuntoMidias:
 
     def navegar(self, quantidade=5):
         print("\n🎬 Conteúdos sugeridos para você:\n")
+        if not self.midias:
+            print("Nenhum conteúdo disponível para navegar.")
+            return
         amostra = random.sample(self.midias, min(quantidade, len(self.midias)))
         for midia in amostra:
             midia.exibir_informacoes()
@@ -62,6 +66,7 @@ class Midia(ABC):
             status = "❌ Não Assistido"
         return status
 
+    # a função agora recebe o perfil para registrar o último conteúdo assistido
     def assistir(self, usuario, perfil):
         usuario.conteudos_vistos += 1
         if usuario.plano.limite_diario < usuario.conteudos_vistos:
@@ -86,7 +91,7 @@ class Midia(ABC):
             # marcação de estado
             self.assistido = True
             self.ultima_exibicao = datetime.datetime.now()
-            perfil.ultimo_conteudo_assistido = self.titulo # 
+            perfil.ultimo_conteudo_assistido = self.titulo  # registra o último conteúdo assistido no perfil
 
             # avaliação de banda antes de começar
             usuario.otimizacao_banda_larga.ajustar_qualidade(usuario)
@@ -154,7 +159,6 @@ class Midia(ABC):
         print("Obrigado por assistir!")
         time.sleep(1.5)
         limpar_tela()
-
 
 class Filme(Midia):
     def exibir_informacoes(self):
@@ -229,126 +233,38 @@ class Anime(Midia):
         print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
         print("╚" + "═" * 50 + "╝")
 
-
+# essa função foi modificada para ler do json
 def todas_as_midias():
     midias = []
+    try:
+        with open('midias.json', 'r', encoding='utf-8') as f:
+            dados_midias = json.load(f)
 
-    # Ação
-    midias.append(Filme("O Resgate", "Ação", "16+", 120))
-    midias.append(Filme("Até o Último Homem", "Ação", "16+", 140))
-    midias.append(Serie("The Last of Us", "Ação", "16+", 50, 9, 1))
-    midias.append(Filme("Vingadores: Ultimato", "Ação", "12", 181))
-    midias.append(Serie("The Walking Dead", "Ação", "16", 42, 177, 11))
-    midias.append(Serie("Arcane", "Ação", "16", 24, 24, 1))
-    midias.append(Filme("Mad Max: Estrada da Fúria", "Ação", "16", 120))
-    midias.append(Filme("John Wick", "Ação", "16", 101))
-    midias.append(Filme("John Wick 2", "Ação", "16", 122))
-    midias.append(Filme("John Wick 3", "Ação", "16", 130))
-    midias.append(Filme("Homem-Aranha: Sem Volta para Casa", "Ação", "12", 148))
-    midias.append(Filme("Batman: O Cavaleiro das Trevas", "Ação", "12", 152))
-    midias.append(Filme("O Resgate do Soldado Ryan", "Ação", "16", 169))
-    midias.append(Filme("Stalingrado", "Ação", "16", 131))
-    midias.append(Filme("1917", "Ação", "16", 119))
-    midias.append(Filme("Invasão do mundo: Batalha de Los Angeles", "Ação", "12", 116))
+        for item in dados_midias:
+            tipo = item.get("tipo")
+            if tipo == "filme":
+                midias.append(Filme(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
+            elif tipo == "serie":
+                midias.append(Serie(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"], item["episodios"], item["temporadas"]))
+            elif tipo == "documentario":
+                midias.append(Documentario(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
+            elif tipo == "novela":
+                 midias.append(Novela(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
+            elif tipo == "anime":
+                midias.append(Anime(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"], item["episodios"], item["temporadas"]))
+        
+        return midias
 
-    # Comédia
-    midias.append(Filme("O auto da Compadecida", "Comédia", "12", 100))
-    midias.append(Filme("Debi & Loide", "Comédia", "12", 107))
-    midias.append(Filme("Shrek 5", "Comédia", "10", 120))
-    midias.append(Serie("Brooklyn Nine-Nine", "Comédia", "12", 22, 153, 8))
-    midias.append(Serie("Friends", "Comédia", "12", 22, 236, 10))
-    midias.append(Serie("Os Simpsons", "Comédia", "10", 22, 700, 34))
-    midias.append(Filme("Minecraft: O Filme", "Comédia", "10", 120))
-    midias.append(Filme("Minha Mãe é uma Peça", "Comédia", "12", 100))
-    midias.append(Serie("The Office", "Comédia", "14", 22, 201, 9))
-    midias.append(Filme("Click", "Comédia", "12", 107))
+    except FileNotFoundError:
+        print("Erro: O arquivo 'midias.json' não foi encontrado.")
+        return []
+    except json.JSONDecodeError:
+        print("Erro: O arquivo 'midias.json' possui um formato inválido.")
+        return []
+    except KeyError as e:
+        print(f"Erro: A chave {e} está faltando em um dos itens no arquivo 'midias.json'.")
+        return []
 
-    # Drama
-    midias.append(Serie("This Is Us", "Drama", "14", 43, 106, 6))
-    midias.append(Filme("A Lista de Schindler", "Drama", "16", 195))
-    midias.append(Filme("O Pianista", "Drama", "16", 150))
-    midias.append(Serie("Forest Gump", "Drama", "12", 142, 1, 1))
-    midias.append(Filme("Oppenheimer", "Drama", "14", 180))
-    midias.append(Filme("Ainda Estou Aqui", "Drama", "12", 120))
-    midias.append(Filme("A Rede Social", "Drama", "12", 120))
-    midias.append(Filme("A Teoria de Tudo", "Drama", "12", 123))
-    midias.append(Filme("O Lobo de Wall Street", "Drama", "16", 180))
-
-    # Romance
-    midias.append(Filme("A Culpa é das Estrelas", "Romance", "12", 126))
-    midias.append(Filme("Como Eu Era Antes de Você", "Romance", "12", 110))
-    midias.append(Filme("Atypical", "Romance", "12", 30))
-    midias.append(Serie("Thundermans", "Romance", "10", 22, 52, 4))
-    midias.append(Filme("Me Chame Pelo Seu Nome", "Romance", "16", 132))
-    midias.append(Serie("Emily em Paris", "Romance", "12", 30, 30, 3))
-    midias.append(Filme("Para Todos os Garotos que Já Amei", "Romance", "12", 99))
-
-    # Terror
-    midias.append(Filme("O Telefone Preto", "Terror", "16", 115))
-    midias.append(Filme("Sorria", "Terror", "16", 100))
-    midias.append(Filme("O chamado", "Terror", "16", 120))
-    midias.append(Filme("Jogos Mortais", "Terror", "18", 90))
-    midias.append(Filme("Five Nights at Freddy's", "Terror", "16", 110))
-    midias.append(Filme("Five Nights at Freddy's 2", "Terror", "16", 130))
-
-    # Documentário
-    midias.append(Documentario("Retratos Fantasmas", "Documentário", "10", 60))
-    midias.append(Documentario("Explicando a mente", "Documentário", "10", 30))
-    midias.append(Documentario("O Dilema das Redes", "Documentário", "12", 94))
-    midias.append(Documentario("Nosso Planeta", "Documentário", "10", 50))
-    midias.append(Documentario("O Começo da Vida", "Documentário", "10", 90))
-    midias.append(Documentario("Segunda Guerra Mundial em Cores", "Documentário", "10", 50))
-
-    # Animação
-    midias.append(Anime("Attack on Titan", "Animação", "16", 24, 75, 4))
-    midias.append(Filme("Toy Story 4", "Animação", "10", 100))
-    midias.append(Anime("Naruto Shippuden", "Animação", "12", 23, 220, 20))
-    midias.append(Anime("One Piece", "Animação", "12", 24, 1000, 20))
-    midias.append(Filme("Kung Fu Panda", "Animação", "10", 92))
-    midias.append(Serie("Rick and Morty", "Animação", "16", 22, 61, 5))
-    midias.append(Serie("Peixonauta", "Animação", "10", 11, 52, 2))
-    midias.append(Anime("Dragon Ball Z", "Animação", "12", 24, 291, 9))
-    midias.append(Filme("O Rei Leão", "Animação", "10", 88))
-    midias.append(Filme("Frozen", "Animação", "10", 102))
-    midias.append(Filme("Divertida Mente", "Animação", "10", 95))
-    midias.append(Filme("Zootopia", "Animação", "10", 108))
-    midias.append(Filme("Sonic: O Filme", "Animação", "10", 99))
-    midias.append(Filme("Sonic 2: O Filme", "Animação", "10", 122))
-    midias.append(Filme("Super Mario Bros: O Filme", "Animação", "10", 92))
-    midias.append(Filme("Minions", "Animação", "10", 91))
-    midias.append(Filme("Os Incríveis", "Animação", "10", 115))
-    midias.append(Filme("A Era do Gelo", "Animação", "10", 81))
-    midias.append(Filme("A Era do Gelo 2", "Animação", "10", 94))
-    midias.append(Filme("A Era do Gelo 3", "Animação", "10", 94))
-    midias.append(Serie("A Turma da Mônica", "Animação", "10", 11, 52, 2))
-
-
-    # Fantasia
-    midias.append(Serie("Guerra dos Tronos", "Ação", "18", 60, 73, 8))
-    midias.append(Filme("Harry Potter e a Pedra Filosofal", "Fantasia", "10", 152))
-    midias.append(Filme("O Senhor dos Anéis: A Sociedade do Anel", "Fantasia", "12", 178))
-    midias.append(Serie("A casa do Dragão", "Fantasia", "18", 60, 10, 1))
-    midias.append(Serie("The Witcher", "Fantasia", "18", 60, 32, 2))
-    midias.append(Filme("As Crônicas de Nárnia", "Fantasia", "10", 143))
-    midias.append(Filme("Peter Pan", "Fantasia", "10", 77))
-    midias.append(Filme("Percy Jackson e o Ladrão de Raios", "Fantasia", "12", 118))
-
-    # Aventura
-    midias.append(Serie("Pokémon", "Aventura", "10", 22, 1200, 25))
-    midias.append(Serie("Hora de Aventura", "Aventura", "10", 11, 283, 10))
-    midias.append(Filme("Jurassic Park", "Aventura", "12", 127))
-    midias.append(Serie("Steven Universe", "Aventura", "10", 11, 160, 5))
-    midias.append(Serie("Apenas um Show", "Aventura", "10", 11, 261, 8))
-    midias.append(Serie("O incrível mundo de Gumball", "Aventura", "10", 11, 240, 6))
-    midias.append(Serie("Peppa Pig", "Aventura", "10", 5, 300, 7))
-    midias.append(Filme("Como Treinar o Seu Dragão", "Aventura", "10", 98))
-    midias.append(Serie("Ben 10", "Aventura", "10", 22, 70, 4))
-    midias.append(Serie("Ben 10: Força Alienígena", "Aventura", "10", 22, 70, 4))
-    midias.append(Serie("Ben 10: Supremacia Alienígena", "Aventura", "10", 22, 70, 4))
-    midias.append(Serie("Ben 10: Omniverse", "Aventura", "10", 22, 70, 4))
-    midias.append(Serie("Minecraft: Story Mode", "Aventura", "10", 22, 8, 1))
-    
-    return midias
 
 def obter_catalogo_do_perfil(perfil) -> ConjuntoMidias:
     if perfil.catalogo is None:
@@ -465,7 +381,6 @@ def Explorar_Conteudo(usuario):
             print("Opção inválida. Tente novamente.")
             time.sleep(1)
         limpar_tela()
-
 
 def Explorar_Conteudo_Convidado():
     print("Bem-vindo(a) ao modo convidado!")

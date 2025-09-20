@@ -51,6 +51,8 @@ python main.py
 - **BandaLarga**: Template para a manuntenção da banda larga e a qualidade da transmissão enquanto a pessoa assiste;
 - **Avaliacoes**: Template para avaliações e reviews sobre um certo conteúdo em uma mini-rede social;
 
+---
+
 ## 🛠️ **Refatoração**
 
 ### 🧮 **Mudanças menores**
@@ -61,3 +63,7 @@ python main.py
 
 
 ### ⚒️ **Mudanças significativas**
+- **Mudança de armazenamento**: Os anúncios e mídias disponíveis agora se encontram num .JSON à parte da lógica do programa.
+- **Melhoria da lógica de recomendação**: As recomendações do sistema agora sugerem títulos similares, e não só um gênero.
+- ****: 
+- ****: 

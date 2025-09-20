@@ -1,0 +1,87 @@
+[
+  {
+    "nome": "SuperFone",
+    "produto": "Smartphone X",
+    "descricao": "O smartphone mais avançado do mercado!"
+  },
+  {
+    "nome": "SuperTablet",
+    "produto": "Tablet Y",
+    "descricao": "O tablet mais potente do mercado!"
+  },
+  {
+    "nome": "SuperLaptop",
+    "produto": "Laptop Z",
+    "descricao": "O laptop mais leve e rápido do mercado!"
+  },
+  {
+    "nome": "SuperWatch",
+    "produto": "Smartwatch W",
+    "descricao": "O smartwatch mais elegante do mercado!"
+  },
+  {
+    "nome": "SuperCamera",
+    "produto": "Câmera V",
+    "descricao": "A câmera com a melhor qualidade de imagem!"
+  },
+  {
+    "nome": "Coca-Cola",
+    "produto": "Refrigerante",
+    "descricao": "O refrigerante mais famoso do mundo!"
+  },
+  {
+    "nome": "Burger King",
+    "produto": "Whopper",
+    "descricao": "Sabor inconfundível que mata a fome!"
+  },
+  {
+    "nome": "Nestlé",
+    "produto": "Chocolate",
+    "descricao": "Mais cremoso e delicioso que nunca!"
+  },
+  {
+    "nome": "Nike",
+    "produto": "Tênis Air Zoom",
+    "descricao": "Conforto e performance para o seu dia!"
+  },
+  {
+    "nome": "Adidas",
+    "produto": "Camisa Esportiva",
+    "descricao": "Leve, respirável e cheia de estilo!"
+  },
+  {
+    "nome": "Ray-Ban",
+    "produto": "Óculos Aviador",
+    "descricao": "Clássico que nunca sai de moda!"
+  },
+  {
+    "nome": "Spotify",
+    "produto": "Premium",
+    "descricao": "Música sem anúncios, offline e ilimitada!"
+  },
+  {
+    "nome": "Netflix",
+    "produto": "Plano Padrão",
+    "descricao": "Séries e filmes para maratonar!"
+  },
+  {
+    "nome": "Uber",
+    "produto": "Corridas",
+    "descricao": "Sua viagem rápida e segura a um toque!"
+  },
+  {
+    "nome": "PlayStation",
+    "produto": "PS5",
+    "descricao": "O console da nova geração está aqui!"
+  },
+  {
+    "nome": "Xbox",
+    "produto": "Game Pass",
+    "descricao": "Milhares de jogos por um café/dia!"
+  },
+  {
+    "nome": "Nintendo",
+    "produto": "Switch OLED",
+    "descricao": "Diversão onde você estiver!"
+  }
+]

@@ -1,70 +1,52 @@
 # recommendations.py
 
 # Personalized Recommendations: Offering personalized content recommendations based on user preferences
-import time
-
+from collections import Counter
+import random
+from library_management import obter_catalogo_do_perfil 
 
 class Recomendacoes:
     def __init__(self):
-        self.conteudos = []
+        self.generos_assistidos = []
 
-    def adicionar_conteudo(self, nome):
-        self.conteudos.append(nome)
+    def adicionar_conteudo(self, genero):
+        self.generos_assistidos.append(genero)
 
-    def recomendar_conteudo(self, usuario):
-        contador_acao = contador_comedia = contador_drama = 0
-        contador_romance = contador_terror = contador_documentario = 0
-        contador_animacao = contador_fantasia = contador_aventura = 0
+    def recomendar_conteudo(self, usuario, perfil):
+        NUM_RECOMENDACOES = 3
 
-        if not self.conteudos:
-            print("Assista algo para poder ter recomendações relacionadas ao seu gosto!")
-            time.sleep(2)
-            return
-        elif usuario.plano.recomendacoes_personalizadas is False:
+        if not usuario.plano.recomendacoes_personalizadas:
             print("Recomendações personalizadas estão desativadas para o plano gratuito. Faça um upgrade no seu plano!")
-            time.sleep(2)
             return
-        else:
-            for conteudo in self.conteudos:
-                if conteudo == "Ação":
-                    contador_acao += 1
-                elif conteudo == "Comédia":
-                    contador_comedia += 1
-                elif conteudo == "Drama":
-                    contador_drama += 1
-                elif conteudo == "Romance":
-                    contador_romance += 1
-                elif conteudo == "Terror":
-                    contador_terror += 1
-                elif conteudo == "Documentário":
-                    contador_documentario += 1
-                elif conteudo == "Animação":
-                    contador_animacao += 1
-                elif conteudo == "Fantasia":
-                    contador_fantasia += 1
-                elif conteudo == "Aventura":
-                    contador_aventura += 1
+            
+        if not self.generos_assistidos:
+            print("Assista a alguns conteúdos para receber recomendações personalizadas!")
+            return
 
-        maximo = max(contador_acao, contador_comedia, contador_drama, contador_romance,
-                     contador_terror, contador_documentario, contador_animacao,
-                     contador_fantasia, contador_aventura)
-        # Implementar função aqui pra retornar uma lista de filmes ou series de uma categoria específica
-        # Exemplo: retornar lista de filmes de ação
-        if maximo == contador_acao:
-            print("Recomendação: Ação")
-        elif maximo == contador_comedia:
-            print("Recomendação: Comédia")
-        elif maximo == contador_drama:
-            print("Recomendação: Drama")
-        elif maximo == contador_romance:
-            print("Recomendação: Romance")
-        elif maximo == contador_terror:
-            print("Recomendação: Terror")
-        elif maximo == contador_documentario:
-            print("Recomendação: Documentário")
-        elif maximo == contador_animacao:
-            print("Recomendação: Animação")
-        elif maximo == contador_fantasia:
-            print("Recomendação: Fantasia")
-        elif maximo == contador_aventura:
-            print("Recomendação: Aventura")
+        # 1. encontramos o gênero mais assistido
+        contador_generos = Counter(self.generos_assistidos)
+        genero_recomendado = contador_generos.most_common(1)[0][0]
+
+        print(f"Com base no seu interesse por '{genero_recomendado}', aqui estão algumas sugestões para você:\n")
+
+        # 2. obtemos o catálogo completo e o histórico de mídias assistidas do perfil
+        catalogo_completo = obter_catalogo_do_perfil(perfil)
+        # Usamos um conjunto (set) para uma verificação de 'assistido' mais rápida e eficiente
+        titulos_assistidos = {midia.titulo for midia in perfil.historico.historico}
+
+        # 3. filtramos o catálogo para encontrar sugestões não assistidas do gênero recomendado
+        sugestoes = [
+            midia for midia in catalogo_completo.midias 
+            if midia.genero == genero_recomendado and midia.titulo not in titulos_assistidos
+        ]
+
+        # 4. exbimos as as sugestões
+        if not sugestoes:
+            print(f"Parece que você já assistiu todo o nosso conteúdo de '{genero_recomendado}'. Impressionante!")
+            print("Continue explorando outros gêneros!")
+        else:
+            random.shuffle(sugestoes) 
+            
+            for midia_sugerida in sugestoes[:NUM_RECOMENDACOES]:
+                midia_sugerida.exibir_informacoes()
+                print()
