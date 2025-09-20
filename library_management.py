@@ -1,5 +1,6 @@
 # library_management.py
 
+# Content Library Management: Managing a library of streaming content, including movies and TV shows
 from numpy import append
 import random
 from utility import limpar_tela, normalizar_texto
@@ -7,18 +8,14 @@ import time
 from abc import ABC, abstractmethod
 import datetime
 from ads_management import realizar_exibicao_anuncio, redefinir_limite_diario
+from rating_and_reviews import Avaliacoes 
 import json 
 
-LARGURA_CAIXA = 60
-
-def formatar_linha(conteudo, largura_interior):
-    if len(conteudo) > largura_interior:
-        conteudo = conteudo[:largura_interior - 3] + "..."
-    
-    padding = ' ' * (largura_interior - len(conteudo))
-    return f"║{conteudo}{padding}║"
+from predefinitions import retornar_avaliacoes_predefinidas
+reviews_globais = retornar_avaliacoes_predefinidas()
 
 class ConjuntoMidias:
+    # referente a varias midias
     def __init__(self):
         self.midias= []
     
@@ -49,14 +46,16 @@ class ConjuntoMidias:
             print()
 
 class Midia(ABC):
-    def __init__(self, titulo, genero, classificacao, tempo_duracao):
+    # referente a uma midia especifica
+    def __init__(self, id_midia, titulo, genero, classificacao, tempo_duracao):
+        self.id_midia = id_midia
         self.titulo = titulo
         self.genero = genero
         self.classificacao = classificacao
         self.tempo_duracao = tempo_duracao
         self.assistido = False
         self.ultima_exibicao = None
-
+        
     @abstractmethod
     def exibir_informacoes(self):
         pass
@@ -71,6 +70,7 @@ class Midia(ABC):
             status = "❌ Não Assistido"
         return status
 
+    # a função agora recebe o perfil para registrar o último conteúdo assistido
     def assistir(self, usuario, perfil):
         usuario.conteudos_vistos += 1
         if usuario.plano.limite_diario < usuario.conteudos_vistos:
@@ -91,18 +91,25 @@ class Midia(ABC):
             limpar_tela()
             titulo = self.titulo.strip()
             titulo_centralizado = titulo.center(24)
+
+            # marcação de estado
             self.assistido = True
             self.ultima_exibicao = datetime.datetime.now()
-            perfil.ultimo_conteudo_assistido = self.titulo
+            perfil.ultimo_conteudo_assistido = self.titulo  # registra o último conteúdo assistido no perfil
+
+            # avaliação de banda antes de começar
             usuario.otimizacao_banda_larga.ajustar_qualidade(usuario)
             usuario.otimizacao_banda_larga.exibir_configuracoes_qualidade()
+        
             print()
+
             print("░▀▄░░▄▀")
             print("▄▄▄██▄▄▄▄▄")
             print("█▒░▒░▒░█▀█ Assistindo:")
             print(f"█░▒░▒░▒█▀█ {titulo_centralizado} ")
             print("█▄▄▄▄▄▄███═════════════════════")
             print()
+            # a cada alguns segundos, tentar exibir um anuncio
             if usuario.plano.nome != "Premium":
                 anuncio = realizar_exibicao_anuncio(usuario)
                 if anuncio is True:
@@ -116,16 +123,25 @@ class Midia(ABC):
             escolha = input(
                 "1. Continuar assistindo\n"
                 "2. Mudar a qualidade de reprodução\n"
-                "3. Parar de assistir\n"
+                "3. Ver avaliações deste conteúdo\n"
+                "4. Parar de assistir\n"
                 "Escolha uma opção: "
             ).strip()
+
             if escolha == "1":
                 print("Retomando...")
                 time.sleep(1)
                 continue
             elif escolha == "2":
                 usuario.otimizacao_banda_larga.mudar_qualidade(usuario)  
+                
             elif escolha == "3":
+                limpar_tela()
+                print(f"Exibindo avaliações para: {self.titulo}\n")
+                reviews_globais.mostrar_avaliacoes_por_id(self.id_midia)
+                input("\nPressione Enter para voltar...")
+
+            elif escolha == "4":
                 print(f"\nVocê parou de assistir {self.titulo}.")
                 print("Obrigado por assistir!")
                 time.sleep(1.5)
@@ -140,6 +156,7 @@ class Midia(ABC):
         titulo_centralizado = titulo.center(24)
         self.assistido = True
         self.ultima_exibicao = datetime.datetime.now()
+
         print("░▀▄░░▄▀")
         print("▄▄▄██▄▄▄▄▄")
         print("█▒░▒░▒░█▀█ Assistindo:")
@@ -154,84 +171,95 @@ class Midia(ABC):
         limpar_tela()
 
 class Filme(Midia):
+    def __init__(self, id_midia, titulo, genero, classificacao, tempo_duracao):
+        super().__init__(id_midia, titulo, genero, classificacao, tempo_duracao)
+
     def exibir_informacoes(self):
-        largura_interior = LARGURA_CAIXA - 2
-        print("╔" + "═" * largura_interior + "╗")
-        print(formatar_linha(f" 🎬  {self.titulo}", largura_interior))
-        print("╠" + "═" * largura_interior + "╣")
-        print(formatar_linha(" Tipo: Filme", largura_interior))
-        print(formatar_linha(f" Gênero: {self.genero}", largura_interior))
-        print(formatar_linha(f" Classificação: {self.classificacao}", largura_interior))
-        print(formatar_linha(f" Duração: {self.tempo_duracao} min", largura_interior))
-        print(formatar_linha(f" Status: {self.configurar_visualizacao()}", largura_interior))
-        print("╚" + "═" * largura_interior + "╝")
+        print("╔" + "═" * 50 + "╗")
+        print(f"║ 🎬  {self.titulo:<42}║") 
+        print("╠" + "═" * 50 + "╣")
+        print(f"║ ID: {self.id_midia:<44}║") 
+        print(f"║ Tipo: Filme{'':<42}║")
+        print(f"║ Gênero: {self.genero:<40}║")
+        print(f"║ Classificação: {self.classificacao:<32}║")
+        print(f"║ Duração: {self.tempo_duracao} min{'':<31}║")
+        print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        print("╚" + "═" * 50 + "╝")
 
 class Serie(Midia):
-    def __init__(self, titulo, genero, classificacao, tempo_duracao, episodios, temporadas):
-        super().__init__(titulo, genero, classificacao, tempo_duracao)
+    def __init__(self, id_midia, titulo, genero, classificacao, tempo_duracao, episodios, temporadas):
+        super().__init__(id_midia, titulo, genero, classificacao, tempo_duracao)
         self.episodios = episodios
         self.temporadas = temporadas
 
     def exibir_informacoes(self):
-        largura_interior = LARGURA_CAIXA - 2
-        print("╔" + "═" * largura_interior + "╗")
-        print(formatar_linha(f" 📺  {self.titulo}", largura_interior))
-        print("╠" + "═" * largura_interior + "╣")
-        print(formatar_linha(" Tipo: Série", largura_interior))
-        print(formatar_linha(f" Gênero: {self.genero}", largura_interior))
-        print(formatar_linha(f" Classificação: {self.classificacao}", largura_interior))
-        print(formatar_linha(f" Duração média: {self.tempo_duracao} min/ep", largura_interior))
-        print(formatar_linha(f" Episódios: {self.episodios}", largura_interior))
-        print(formatar_linha(f" Temporadas: {self.temporadas}", largura_interior))
-        print(formatar_linha(f" Status: {self.configurar_visualizacao()}", largura_interior))
-        print("╚" + "═" * largura_interior + "╝")
+        print("╔" + "═" * 50 + "╗")
+        print(f"║ 📺  {self.titulo:<42}║")
+        print("╠" + "═" * 50 + "╣")
+        print(f"║ ID: {self.id_midia:<44}║") 
+        print(f"║ Tipo: Série{'':<42}║")
+        print(f"║ Gênero: {self.genero:<40}║")
+        print(f"║ Classificação: {self.classificacao:<32}║")
+        print(f"║ Duração média de episódios: {self.tempo_duracao} min{'':<31}║")
+        print(f"║ Episódios: {self.episodios:<40}║")
+        print(f"║ Temporadas: {self.temporadas:<38}║")
+        print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        print("╚" + "═" * 50 + "╝")
 
 class Documentario(Midia):
+    def __init__(self, id_midia, titulo, genero, classificacao, tempo_duracao):
+        super().__init__(id_midia, titulo, genero, classificacao, tempo_duracao)
+
     def exibir_informacoes(self):
-        largura_interior = LARGURA_CAIXA - 2
-        print("╔" + "═" * largura_interior + "╗")
-        print(formatar_linha(f" 📽️  {self.titulo}", largura_interior))
-        print("╠" + "═" * largura_interior + "╣")
-        print(formatar_linha(" Tipo: Documentário", largura_interior))
-        print(formatar_linha(f" Gênero: {self.genero}", largura_interior))
-        print(formatar_linha(f" Classificação: {self.classificacao}", largura_interior))
-        print(formatar_linha(f" Duração: {self.tempo_duracao} min", largura_interior))
-        print(formatar_linha(f" Status: {self.configurar_visualizacao()}", largura_interior))
-        print("╚" + "═" * largura_interior + "╝")
+        print("╔" + "═" * 50 + "╗")
+        print(f"║ 📽️  {self.titulo:<42}║")
+        print("╠" + "═" * 50 + "╣")
+        print(f"║ ID: {self.id_midia:<44}║") 
+        print(f"║ Tipo: Documentário{'':<42}║")
+        print(f"║ Gênero: {self.genero:<40}║")
+        print(f"║ Classificação: {self.classificacao:<32}║")
+        print(f"║ Duração: {self.tempo_duracao} min{'':<31}║")
+        print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        print("╚" + "═" * 50 + "╝")
 
 class Novela(Midia):
+    def __init__(self, id_midia, titulo, genero, classificacao, tempo_duracao):
+        super().__init__(id_midia, titulo, genero, classificacao, tempo_duracao)
+
     def exibir_informacoes(self):
-        largura_interior = LARGURA_CAIXA - 2
-        print("╔" + "═" * largura_interior + "╗")
-        print(formatar_linha(f" 🌹  {self.titulo}", largura_interior))
-        print("╠" + "═" * largura_interior + "╣")
-        print(formatar_linha(" Tipo: Novela", largura_interior))
-        print(formatar_linha(f" Gênero: {self.genero}", largura_interior))
-        print(formatar_linha(f" Classificação: {self.classificacao}", largura_interior))
-        print(formatar_linha(f" Duração: {self.tempo_duracao} min", largura_interior))
-        print(formatar_linha(f" Status: {self.configurar_visualizacao()}", largura_interior))
-        print("╚" + "═" * largura_interior + "╝")
+        print("╔" + "═" * 50 + "╗")
+        print(f"║ 🌹  {self.titulo:<42}║")
+        print("╠" + "═" * 50 + "╣")
+        print(f"║ ID: {self.id_midia:<44}║")
+        print(f"║ Tipo: Novela{'':<42}║")
+        print(f"║ Gênero: {self.genero:<40}║")
+        print(f"║ Classificação: {self.classificacao:<32}║")
+        print(f"║ Duração: {self.tempo_duracao} min{'':<31}║")
+        print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        print("╚" + "═" * 50 + "╝")
 
 class Anime(Midia):
-    def __init__(self, titulo, genero, classificacao, tempo_duracao, episodios, temporadas):
-        super().__init__(titulo, genero, classificacao, tempo_duracao)
+    # agora aqui a gente adiciona o id_midia
+    def __init__(self, id_midia, titulo, genero, classificacao, tempo_duracao, episodios, temporadas):
+        super().__init__(id_midia, titulo, genero, classificacao, tempo_duracao)
         self.episodios = episodios
         self.temporadas = temporadas
-        
-    def exibir_informacoes(self):
-        largura_interior = LARGURA_CAIXA - 2
-        print("╔" + "═" * largura_interior + "╗")
-        print(formatar_linha(f" 🎌  {self.titulo}", largura_interior))
-        print("╠" + "═" * largura_interior + "╣")
-        print(formatar_linha(" Tipo: Anime", largura_interior))
-        print(formatar_linha(f" Gênero: {self.genero}", largura_interior))
-        print(formatar_linha(f" Classificação: {self.classificacao}", largura_interior))
-        print(formatar_linha(f" Duração média: {self.tempo_duracao} min/ep", largura_interior))
-        print(formatar_linha(f" Episódios: {self.episodios}", largura_interior))
-        print(formatar_linha(f" Temporadas: {self.temporadas}", largura_interior))
-        print(formatar_linha(f" Status: {self.configurar_visualizacao()}", largura_interior))
-        print("╚" + "═" * largura_interior + "╝")
 
+    def exibir_informacoes(self):
+        print("╔" + "═" * 50 + "╗")
+        print(f"║ 🎌  {self.titulo:<42}║")
+        print("╠" + "═" * 50 + "╣")
+        print(f"║ ID: {self.id_midia:<44}║") 
+        print(f"║ Tipo: Anime{'':<42}║")
+        print(f"║ Gênero: {self.genero:<40}║")
+        print(f"║ Classificação: {self.classificacao:<32}║")
+        print(f"║ Duração média de episódios: {self.tempo_duracao} min{'':<31}║")
+        print(f"║ Episódios: {self.episodios:<40}║")
+        print(f"║ Temporadas: {self.temporadas:<38}║")
+        print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        print("╚" + "═" * 50 + "╝")
+
+# função atualizada para ler o id do JSON
 def todas_as_midias():
     midias = []
     try:
@@ -240,16 +268,17 @@ def todas_as_midias():
 
         for item in dados_midias:
             tipo = item.get("tipo")
+            # passa o ID para o construtor da classe
             if tipo == "filme":
-                midias.append(Filme(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
+                midias.append(Filme(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
             elif tipo == "serie":
-                midias.append(Serie(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"], item["episodios"], item["temporadas"]))
+                midias.append(Serie(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"], item["episodios"], item["temporadas"]))
             elif tipo == "documentario":
-                midias.append(Documentario(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
+                midias.append(Documentario(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
             elif tipo == "novela":
-                 midias.append(Novela(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
+                 midias.append(Novela(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
             elif tipo == "anime":
-                midias.append(Anime(item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"], item["episodios"], item["temporadas"]))
+                midias.append(Anime(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"], item["episodios"], item["temporadas"]))
         
         return midias
 
@@ -266,7 +295,7 @@ def todas_as_midias():
 def obter_catalogo_do_perfil(perfil) -> ConjuntoMidias:
     if perfil.catalogo is None:
         cat = ConjuntoMidias()
-        midias = todas_as_midias()
+        midias = todas_as_midias()  # cria as instâncias UMA vez para este perfil
         if getattr(perfil, "controle_parental", False):
             midias = [m for m in midias if int(str(m.classificacao).rstrip('+')) <= perfil.idade_limite]
         cat.midias.extend(midias)
@@ -291,9 +320,6 @@ def Explorar_Conteudo(usuario):
     time.sleep(1)
 
     catalogo = obter_catalogo_do_perfil(perfil)
-    
-    if perfil.controle_parental:
-        catalogo.midias = [m for m in catalogo.midias if int(str(m.classificacao).rstrip('+')) <= perfil.idade_limite]
     
     while True:
         print("Biblioteca de Conteúdo:")
@@ -367,9 +393,11 @@ def Explorar_Conteudo(usuario):
             else:
                 print("Entrada inválida.")
 
+
         elif escolha == "5":
             print("Saindo da biblioteca...")
             break
+
         else:
             print("Opção inválida. Tente novamente.")
             time.sleep(1)
@@ -398,7 +426,7 @@ def Explorar_Conteudo_Convidado():
         elif escolha == "2":
             titulo = input("Digite o título do conteúdo que deseja assistir: ")
             resultados = catalogo.buscar_por_titulo(titulo)
-
+            
             if not resultados:
                 print("Conteúdo não encontrado.")
                 time.sleep(1.5)
@@ -410,7 +438,7 @@ def Explorar_Conteudo_Convidado():
             print("\nConteúdos encontrados (máx. 3):\n")
             for idx, midia in enumerate(resultados_limitados):
                 print(f"[{idx + 1}]")
-                midia.exibir_informacoes() 
+                midia.exibir_informacoes()
                 print()
 
             escolha_conteudo = input("Digite o número do conteúdo que deseja assistir: ")
@@ -428,5 +456,6 @@ def Explorar_Conteudo_Convidado():
         elif escolha == "3":
             print("Saindo da biblioteca...")
             break
+
         else:
             print("Opção inválida. Tente novamente.")

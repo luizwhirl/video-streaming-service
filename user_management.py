@@ -296,10 +296,12 @@ class Plano:
         self.reviews = False
         self.recomendacoes_personalizadas = False
         self.maximo_perfis = 5
+        self.maximo_telas_simultaneas = 1 
         self.beneficios = [
             "Limite diário de conteúdos",
             "Anúncios frequentes",
             "5 perfis por conta",
+            "1 tela por vez",
             "Não pode Avaliar conteúdo"
         ]
 
@@ -314,11 +316,6 @@ class Plano:
     def plano_gratuito(self):
         self.nome = "Gratuito"
         self.preco = "R$ 0,00"
-        self.beneficios = [
-            "Limite diário de conteúdos",
-            "Anúncios frequentes",
-            "5 perfis por conta",
-        ]
         self.anuncios = True
         self.limite_diario = 10
         self.alta_definicao = False
@@ -326,17 +323,19 @@ class Plano:
         self.reviews = False
         self.maximo_perfis = 5
         self.recomendacoes_personalizadas = False
+        self.maximo_telas_simultaneas = 1 
+        self.beneficios = [
+            "Limite diário de conteúdos",
+            "Anúncios frequentes",
+            "5 perfis por conta",
+            "1 tela por vez",
+            "Não pode Avaliar conteúdo"
+        ]
+
 
     def plano_basico(self):
         self.nome = "Básico"
         self.preco = "R$ 9,90"
-        self.beneficios = [
-            "Sem limite diário de conteúdos",
-            "Anúncios menos frequentes",
-            "Recomendações personalizadas",
-            "10 perfis por conta",
-            "Reviews e avaliações de conteúdo"
-        ]
         self.anuncios = True
         self.limite_diario = 99999
         self.alta_definicao = False
@@ -344,19 +343,19 @@ class Plano:
         self.reviews = True
         self.maximo_perfis = 10
         self.recomendacoes_personalizadas = True
+        self.maximo_telas_simultaneas = 2 
+        self.beneficios = [
+            "Sem limite diário de conteúdos",
+            "Anúncios menos frequentes",
+            "Recomendações personalizadas",
+            "10 perfis por conta",
+            "2 telas simultâneas",
+            "Reviews e avaliações de conteúdo"
+        ]
 
     def plano_premium(self):
         self.nome = "Premium"
         self.preco = "R$ 39,90"
-        self.beneficios = [
-            "Acesso a todos os conteúdos",
-            "Sem anúncios",
-            "Recomendações personalizadas",
-            "15 perfis por conta",
-            "Conteúdos em alta definição",
-            "Streaming em múltiplos dispositivos",
-            "Reviews e avaliações de conteúdo"
-        ]
         self.anuncios = False
         self.limite_diario = 99999
         self.alta_definicao = True
@@ -364,7 +363,17 @@ class Plano:
         self.reviews = True
         self.maximo_perfis = 15
         self.recomendacoes_personalizadas = True
-
+        self.maximo_telas_simultaneas = 4
+        self.beneficios = [
+            "Acesso a todos os conteúdos",
+            "Sem anúncios",
+            "Recomendações personalizadas",
+            "15 perfis por conta",
+            "Conteúdos em alta definição (até 4K)",
+            "4 telas simultâneas",
+            "Reviews e avaliações de conteúdo"
+        ]
+        
     def realizar_pagamento(self, nome_plano):
         planos_disponiveis = ["Básico", "Premium"]
         

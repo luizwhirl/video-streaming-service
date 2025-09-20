@@ -3,40 +3,43 @@
 # Content Rating and Reviews: Enabling users to rate and review content;
 from utility import limpar_tela
 import time
-from library_management import obter_catalogo_do_perfil
+from library_management import todas_as_midias, ConjuntoMidias
 
 class Avaliacoes:
     def __init__(self):
         self.avaliacoes = []
 
-    def definir_avaliacao(self, nome, conteudo, nota, comentario):
+    def definir_avaliacao(self, nome_usuario, midia, nota, comentario):
         avaliacao = {
-            "usuario": nome,
-            "conteudo": conteudo,
+            "usuario": nome_usuario,
+            "id_conteudo": midia.id_midia,
+            "titulo_conteudo": midia.titulo,
             "nota": nota,
             "comentario": comentario
         }
         self.avaliacoes.append(avaliacao)
 
-    def postar_avaliacao(self, usuario, conteudo):
-        limpar_tela()
-        print(f"Postar avaliação para: {conteudo}")
-        
+    def postar_avaliacao(self, usuario, midia_selecionada):
         while True:
             try:
-                nota_str = input("Digite a nota (de 1 a 5): ")
+                nota_str = input("Digite a nota (1 a 5): ")
                 nota = int(nota_str)
-                if 1 <= nota <= 5:
-                    break
-                else:
+                if not 1 <= nota <= 5:
                     print("Nota inválida. Por favor, insira um número entre 1 e 5.")
+                    continue
+                break
             except ValueError:
                 print("Entrada inválida. Por favor, digite um número.")
 
         comentario = input("Digite seu comentário sobre o conteúdo: ")
-        self.definir_avaliacao(usuario.nome, conteudo, nota, comentario)
+        self.definir_avaliacao(usuario.nome, midia_selecionada, nota, comentario)
         print("Avaliação postada com sucesso!")
         time.sleep(1.5)
+
+    def formatar_nota_estrelas(self, nota_num):
+        if isinstance(nota_num, str):
+            return nota_num
+        return "★" * nota_num + "☆" * (5 - nota_num)
 
     def mostrar_avaliacoes(self):
         if not self.avaliacoes:
@@ -44,13 +47,26 @@ class Avaliacoes:
             return
 
         for avaliacao in self.avaliacoes:
-            if isinstance(avaliacao["nota"], int):
-                avaliacao["nota"] = "★" * avaliacao["nota"] + "☆" * (5 - avaliacao["nota"])
-            
+            nota_estrelas = self.formatar_nota_estrelas(avaliacao["nota"])
             print("═" * 60)
             print(f"@ {avaliacao['usuario']}")
-            print(f"Conteúdo: {avaliacao['conteudo']}")
-            print(f"Nota: {str(avaliacao['nota'])}")
+            print(f"Conteúdo: {avaliacao['titulo_conteudo']}")
+            print(f"Nota: {nota_estrelas}")
+            print(f"Comentário: {avaliacao['comentario']}")
+            print("═" * 60)
+
+    def mostrar_avaliacoes_por_id(self, id_conteudo):
+        avaliacoes_filtradas = [a for a in self.avaliacoes if a['id_conteudo'] == id_conteudo]
+
+        if not avaliacoes_filtradas:
+            print("Este conteúdo ainda não possui avaliações.")
+            return
+
+        for avaliacao in avaliacoes_filtradas:
+            nota_estrelas = self.formatar_nota_estrelas(avaliacao["nota"])
+            print("═" * 60)
+            print(f"@ {avaliacao['usuario']}")
+            print(f"Nota: {nota_estrelas}")
             print(f"Comentário: {avaliacao['comentario']}")
             print("═" * 60)
 
@@ -62,8 +78,8 @@ def processo_para_avaliar(usuario, reviews):
         limpar_tela()
         print("O que deseja fazer?")
         print("╔" + "═" * 50 + "╗")
-        print("1. Ver avaliações e reviews\n")
-        print("2. Fazer uma Review/Avaliação\n")
+        print("1. Ver todas as avaliações")
+        print("2. Fazer uma avaliação")
         print("3. Voltar ao menu principal")
         print("╚" + "═" * 50 + "╝")
         opcao = input("Digite a opção desejada: ")
@@ -72,57 +88,44 @@ def processo_para_avaliar(usuario, reviews):
             limpar_tela()
             reviews.mostrar_avaliacoes()
             input("\nPressione Enter para continuar...")
-            
+        
         elif opcao == "2":
             limpar_tela()
-            # 1. verificamos se o plano do usuário permite avaliações
             if usuario.plano.nome == "Gratuito":
-                print("Usuários no plano gratuito não podem postar reviews/avaliações.")
+                print("Usuários no plano gratuito não podem postar avaliações.")
                 time.sleep(2)
+                continue
+            
+            catalogo = ConjuntoMidias()
+            catalogo.midias.extend(todas_as_midias())
+
+            titulo = input("Digite o título do conteúdo que deseja avaliar: ")
+            resultados = catalogo.buscar_por_titulo(titulo)
+
+            if not resultados:
+                print("Conteúdo não encontrado.")
+                time.sleep(1.5)
                 continue
 
-            # 2. pedimos para o usuário selecionar um perfil
-            print("Selecione o perfil para fazer a avaliação:")
-            if not usuario.listar_perfis():
-                time.sleep(2)
-                continue
-            
-            nome_perfil = input("Digite o nome do perfil (ou pressione Enter para cancelar): ")
-            if not nome_perfil:
-                continue
-            
-            perfil = usuario.obter_perfil_por_nome(nome_perfil)
-            if not perfil:
-                print(f"Perfil '{nome_perfil}' não encontrado.")
-                time.sleep(2)
-                continue
+            print("\nConteúdos encontrados:\n")
+            for idx, midia in enumerate(resultados):
+                print(f"[{idx + 1}]")
+                midia.exibir_informacoes()
+                print()
 
-            # 3. pedimos o título do negocio
-            conteudo_titulo = input("Digite o nome do conteúdo que deseja avaliar: ")
-            
-            # 4. verficamos se o conteúdo existe no catálogo do perfil
-            catalogo = obter_catalogo_do_perfil(perfil)
-            resultados_busca = catalogo.buscar_por_titulo(conteudo_titulo)
-            
-            if not resultados_busca:
-                print("Conteúdo não encontrado na biblioteca.")
-                time.sleep(2)
+            escolha_conteudo = input("Digite o número do conteúdo que deseja avaliar (ou pressione Enter para cancelar): ")
+            if not escolha_conteudo.isdigit():
                 continue
             
-            midia_alvo = resultados_busca[0]
-
-            # 5. i verificamos se o conteúdo está no histórico de exibição do perfil
-            historico_do_perfil = perfil.historico.historico
-            
-            foi_assistido = any(midia.titulo == midia_alvo.titulo for midia in historico_do_perfil)
-            
-            if foi_assistido:
-                # assistido = então pode
-                reviews.postar_avaliacao(usuario, midia_alvo.titulo)
+            indice = int(escolha_conteudo) - 1
+            if 0 <= indice < len(resultados):
+                conteudo_escolhido = resultados[indice]
+                limpar_tela()
+                print(f"Avaliando: {conteudo_escolhido.titulo}")
+                reviews.postar_avaliacao(usuario, conteudo_escolhido)
             else:
-                # não assistido = então não pode
-                print(f"\nVocê precisa assistir a '{midia_alvo.titulo}' no perfil '{perfil.nome_perfil}' antes de poder avaliá-lo.")
-                input("Pressione Enter para continuar...")
+                print("Opção inválida.")
+                time.sleep(1.5)
 
         elif opcao == "3":
             break

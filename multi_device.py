@@ -11,96 +11,106 @@ class Device:
         self.nome = nome
         self.tipo = tipo
         self.identificador = identificador
+        self.streaming_content = None # mudei isso aqui para que possamos controlar o que está sendo transmitido
 
     def __str__(self):
-        return f"{self.nome} ({self.tipo}) - ID: {self.identificador}"
-
-    def notificar_dispositivo(self, mensagem):
-        print(f"Notificação enviada para {self.nome}: {mensagem}")
+        status = f"Transmitindo: {self.streaming_content}" if self.streaming_content else "Disponível"
+        return f"{self.nome} ({self.tipo}) - ID: {self.identificador} [{status}]"
 
     def exibir_informacoes(self):
         print(f"Dispositivo: {self.nome}")
         print(f"Tipo: {self.tipo}")
         print(f"ID: {self.identificador}")
-    
+        if self.streaming_content:
+            print(f"Status: Transmitindo '{self.streaming_content}'")
+        else:
+            print("Status: Disponível")
+
 class StreamingSession:
     def __init__(self, usuario):
         self.usuario = usuario
         self.dispositivos = [] 
-        self.sessao_ativa = False
-        self.perfil_atual = None
-        self.midia_atual = None
+
+    # vamos contar quantas telas estão ativas
+    def get_sessoes_ativas(self):
+        return sum(1 for d in self.dispositivos if d.streaming_content is not None)
 
     def adicionar_dispositivo(self):
-        nome = input("Digite o nome do dispositivo: ")
-        tipo = input("Digite o tipo do dispositivo: ")
+        nome = input("Digite o nome do dispositivo (ex: TV da Sala): ")
+        tipo = input("Digite o tipo do dispositivo (ex: Smart TV): ")
         device_id = random.randint(1000, 9999)
 
-        if any(d.identificador == device_id for d in self.dispositivos):
-            print("ID de dispositivo já existe. Gerando um novo ID.")
+        while any(d.identificador == device_id for d in self.dispositivos):
             device_id = random.randint(1000, 9999)
 
         dispositivo = Device(nome, tipo, device_id)
         self.dispositivos.append(dispositivo)
-        print(f"Dispositivo {dispositivo} adicionado à sessão de streaming.")
+        print(f"Dispositivo '{dispositivo.nome}' adicionado.")
 
+    # aqui a lógica foi refeita para simular streaming simultâneo
     def iniciar_sessao(self):
-        if not self.dispositivos:
-            print("Nenhum dispositivo disponível para iniciar a sessão.")
-            return
+        sessoes_ativas = self.get_sessoes_ativas()
+        limite_telas = self.usuario.plano.maximo_telas_simultaneas
 
-        if not self.usuario.perfis:
-            print("Nenhum perfil de usuário encontrado. Crie um perfil antes de iniciar a sessão de múltiplo streaming.")
-            time.sleep(1.5)
-            limpar_tela()
-            return
-        
-        print("Perfis disponíveis:")
-        for p in self.usuario.perfis:
-            print(f" - {p.nome_perfil}")
+        print(f"Telas em uso: {sessoes_ativas} de {limite_telas}")
 
-        nome_perfil = input("\nDigite o nome do perfil que deseja usar: ").strip()
-        
-        perfil_obj = self.usuario.obter_perfil_por_nome(nome_perfil)
-        
-        if not perfil_obj:
-            print(f"Perfil '{nome_perfil}' não encontrado.")
-            time.sleep(1.5)
-            limpar_tela()
-            return
-            
-        self.sessao_ativa = True
-        self.perfil_atual = perfil_obj.nome_perfil
-        self.midia_atual = perfil_obj.ultimo_conteudo_assistido
-
-        print(f"Sessão de streaming iniciada para o perfil {self.perfil_atual}.")
-        if self.midia_atual:
-            print(f"Mídia atual: {self.midia_atual}")
-            for dispositivo in self.dispositivos:
-                dispositivo.notificar_dispositivo(f"Iniciando reprodução de '{self.midia_atual}' no seu dispositivo.")
+        if sessoes_ativas >= limite_telas:
+            print("Limite de telas simultâneas atingido para o seu plano!")
             input("Pressione Enter para continuar...")
-        else:
-            print(f"Nenhum conteúdo foi assistido recentemente no perfil '{self.perfil_atual}'.")
-            print("Selecione algo para assistir antes! A sua última mídia assistida será transmitida no seu dispositivo.")
-            self.sessao_ativa = False 
-            input("Pressione Enter para continuar...")
+            return
 
+        dispositivos_disponiveis = [d for d in self.dispositivos if not d.streaming_content]
+        if not dispositivos_disponiveis:
+            print("Todos os seus dispositivos já estão em uso.")
+            input("Pressione Enter para continuar...")
+            return
+
+        print("\nDispositivos disponíveis:")
+        for i, device in enumerate(dispositivos_disponiveis):
+            print(f"{i + 1}. {device.nome} ({device.tipo})")
+
+        escolha = input("Escolha o dispositivo para iniciar a transmissão (ou Enter para cancelar): ")
+        if not escolha.isdigit() or not (1 <= int(escolha) <= len(dispositivos_disponiveis)):
+            return
+        
+        dispositivo_escolhido = dispositivos_disponiveis[int(escolha) - 1]
+        
+        # simula a escolha de um conteúdo para assistir
+        midia = input("Digite o nome do filme/série para assistir neste dispositivo: ")
+        if not midia:
+            print("Nenhum conteúdo selecionado.")
+            return
+
+        dispositivo_escolhido.streaming_content = midia
+        print(f"\nIniciando a transmissão de '{midia}' em '{dispositivo_escolhido.nome}'.")
+        print(f"Telas em uso: {self.get_sessoes_ativas()} de {limite_telas}")
+        input("Pressione Enter para continuar...")
+
+    # a  lógicaaqui foi refeita para encerrar um stream específico
     def encerrar_sessao(self):
-        if not self.sessao_ativa:
-            print("Nenhuma sessão ativa para encerrar.")
+        dispositivos_ativos = [d for d in self.dispositivos if d.streaming_content]
+        if not dispositivos_ativos:
+            print("Nenhuma transmissão ativa para encerrar.")
+            input("Pressione Enter para continuar...")
             return
 
-        self.sessao_ativa = False
-        print(f"Sessão de streaming encerrada para o perfil {self.perfil_atual}.")
-        self.perfil_atual = None
-        self.midia_atual = None
-        for dispositivo in self.dispositivos:
-            dispositivo.notificar_dispositivo("Sessão de streaming encerrada.")
+        print("\nSelecione a transmissão para encerrar:")
+        for i, device in enumerate(dispositivos_ativos):
+            print(f"{i + 1}. {device.nome} (assistindo '{device.streaming_content}')")
+        
+        escolha = input("Qual transmissão deseja encerrar? (ou Enter para cancelar): ")
+        if not escolha.isdigit() or not (1 <= int(escolha) <= len(dispositivos_ativos)):
+            return
+
+        dispositivo_a_parar = dispositivos_ativos[int(escolha) - 1]
+        print(f"\nEncerrando a transmissão em '{dispositivo_a_parar.nome}'.")
+        dispositivo_a_parar.streaming_content = None
+        print(f"Dispositivo agora está disponível. Telas em uso: {self.get_sessoes_ativas()}")
         input("Pressione Enter para continuar...")
 
     def remover_dispositivo(self):
         if not self.dispositivos:
-            print("Nenhum dispositivo disponível para remover.")
+            print("Nenhum dispositivo para remover.")
             return
 
         self.listar_dispositivos()
@@ -112,7 +122,7 @@ class StreamingSession:
             dispositivo = next((d for d in self.dispositivos if d.identificador == dispositivo_id), None)
             if dispositivo:
                 self.dispositivos.remove(dispositivo)
-                print(f"Dispositivo {dispositivo} removido da sessão de streaming.")
+                print(f"Dispositivo '{dispositivo.nome}' removido.")
             else:
                 print("ID de dispositivo não encontrado.")
         except ValueError:
@@ -120,7 +130,7 @@ class StreamingSession:
 
     def listar_dispositivos(self):
         if not self.dispositivos:
-            print("Nenhum dispositivo disponível.")
+            print("Nenhum dispositivo cadastrado.")
             return
 
         print("Dispositivos conectados:\n")
@@ -131,10 +141,13 @@ class StreamingSession:
     def menu_de_streaming(self):
         while True:
             limpar_tela()
-            print("\nConfigurações de Streaming em vários dispositivos:")
+            sessoes_ativas = self.get_sessoes_ativas()
+            limite_telas = self.usuario.plano.maximo_telas_simultaneas
+            
+            print(f"\nConfigurações de Streaming ({sessoes_ativas}/{limite_telas} telas em uso):")
             print("╔" + "═" * 50 + "╗")
-            print("1. Iniciar Sessão")
-            print("2. Encerrar Sessão")
+            print("1. Iniciar Transmissão em um Dispositivo")
+            print("2. Encerrar Transmissão")
             print("3. Adicionar Dispositivo")
             print("4. Remover Dispositivo")
             print("5. Listar Dispositivos")
@@ -144,17 +157,16 @@ class StreamingSession:
 
             if opcao == "1":
                 self.iniciar_sessao()
-                time.sleep(1)
             elif opcao == "2":
                 self.encerrar_sessao()
-                time.sleep(1)
             elif opcao == "3":
                 self.adicionar_dispositivo()
                 time.sleep(1.5)
             elif opcao == "4":
                 self.remover_dispositivo()
-                time.sleep(1)
+                time.sleep(1.5)
             elif opcao == "5":
+                limpar_tela()
                 self.listar_dispositivos()
                 input("Pressione Enter para continuar...")
             elif opcao == "6":
@@ -163,4 +175,3 @@ class StreamingSession:
             else:
                 print("Opção inválida. Tente novamente.")
                 time.sleep(1)
-                limpar_tela()

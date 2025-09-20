@@ -13,40 +13,53 @@ class Recomendacoes:
         self.generos_assistidos.append(genero)
 
     def recomendar_conteudo(self, usuario, perfil):
-        NUM_RECOMENDACOES = 3
+        NUM_RECOMENDACOES = 5
 
         if not usuario.plano.recomendacoes_personalizadas:
             print("Recomendações personalizadas estão desativadas para o plano gratuito. Faça um upgrade no seu plano!")
             return
             
+        catalogo_completo = obter_catalogo_do_perfil(perfil)
+        
         if not self.generos_assistidos:
-            print("Assista a alguns conteúdos para receber recomendações personalizadas!")
+            print("Explore nosso catálogo para começar a receber recomendações personalizadas!")
+            print("Enquanto isso, que tal dar uma olhada nestes títulos?\n")
+            
+            if catalogo_completo.midias:
+                sugestoes_aleatorias = random.sample(catalogo_completo.midias, min(len(catalogo_completo.midias), 3))
+                for midia in sugestoes_aleatorias:
+                    midia.exibir_informacoes()
+                    print()
             return
 
-        # 1. encontramos o gênero mais assistido
+        # 1. encontramos os 2 gêneros mais assistidos
         contador_generos = Counter(self.generos_assistidos)
-        genero_recomendado = contador_generos.most_common(1)[0][0]
+        generos_recomendados = contador_generos.most_common(2)
 
-        print(f"Com base no seu interesse por '{genero_recomendado}', aqui estão algumas sugestões para você:\n")
+        print("Com base no seu histórico, aqui estão algumas sugestões para você:\n")
 
-        # 2. obtemos o catálogo completo e o histórico de mídias assistidas do perfil
-        catalogo_completo = obter_catalogo_do_perfil(perfil)
-        # Usamos um conjunto (set) para uma verificação de 'assistido' mais rápida e eficiente
+        # 2. obtemos o histórico de mídias assistidas do perfil
         titulos_assistidos = {midia.titulo for midia in perfil.historico.historico}
 
-        # 3. filtramos o catálogo para encontrar sugestões não assistidas do gênero recomendado
-        sugestoes = [
-            midia for midia in catalogo_completo.midias 
-            if midia.genero == genero_recomendado and midia.titulo not in titulos_assistidos
-        ]
+        sugestoes_finais = []
+        
+        # 3. iteramos sobre os principais gêneros para coletar sugestões
+        for genero, _ in generos_recomendados:
+            sugestoes_por_genero = [
+                midia for midia in catalogo_completo.midias 
+                if midia.genero == genero and midia.titulo not in titulos_assistidos
+            ]
+            random.shuffle(sugestoes_por_genero)
+            sugestoes_finais.extend(sugestoes_por_genero)
 
-        # 4. exbimos as as sugestões
-        if not sugestoes:
-            print(f"Parece que você já assistiu todo o nosso conteúdo de '{genero_recomendado}'. Impressionante!")
+        # 4. removemos duplicatas (caso um filme se encaixe em mais de um critério futuro) e limitamos o número
+        sugestoes_unicas = list(dict.fromkeys(sugestoes_finais))
+        
+        # 5. exibimos as sugestões
+        if not sugestoes_unicas:
+            print("Parece que você já assistiu muito do nosso conteúdo recomendado. Impressionante!")
             print("Continue explorando outros gêneros!")
         else:
-            random.shuffle(sugestoes) 
-            
-            for midia_sugerida in sugestoes[:NUM_RECOMENDACOES]:
+            for midia_sugerida in sugestoes_unicas[:NUM_RECOMENDACOES]:
                 midia_sugerida.exibir_informacoes()
                 print()
