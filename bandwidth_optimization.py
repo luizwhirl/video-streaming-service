@@ -1,3 +1,5 @@
+# bandwidth_optimization.py
+
 # Bandwidth Optimization: Adapting streaming quality based on user bandwidth
 # Nesse caso, estou simulando uma rede instável visto que para fazer isso diretamente teria que importar outras bibliotecas não nativas do python, como o speedtest
 import random

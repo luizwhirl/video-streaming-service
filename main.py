@@ -1,3 +1,5 @@
+# main.py
+
 import time
 from user_management import User
 from parental_control import select_profile_for_parental_control, select_profile_for_not_parental_control, restringir_conteudo

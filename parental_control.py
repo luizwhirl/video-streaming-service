@@ -1,3 +1,5 @@
+# parental_control.py
+
 # Parental Control Settings: Implementing parental controls for content filtering;
 from utility import limpar_tela
 import time

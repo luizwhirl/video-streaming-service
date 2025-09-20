@@ -1,3 +1,5 @@
+#predefinitions.py
+
 from user_management import User, Perfil
 from rating_and_reviews import Avaliacoes
 

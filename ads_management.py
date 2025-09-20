@@ -1,3 +1,5 @@
+# ads_management.py
+
 # Ad Integration and Management: Managing ad placements for ad-supported content.
 import random
 from utility import limpar_tela
