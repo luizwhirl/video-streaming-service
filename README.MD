@@ -16,13 +16,32 @@ python main.py
 - 📚 **Consultar biblioteca de conteúdo** ✅
 - 👤 **Configurações de usuário** ✅
 - 🤖 **Recomendações personalizadas** ☑️
-- 📱 **Streaming em múltiplos dispositivos** ✅
+- 📱 **Streaming em múltiplos dispositivos** ☑️
 - ⚡ **Otimização de banda larga** ✅
 - ⭐ **Marcar conteúdo e histórico de visualização** ✅
-- 📝 **Revisões e avaliações de conteúdo**☑️
+- 📝 **Revisões e avaliações de conteúdo** ☑️
 - 📢 **Integração com anúncios** ✅
 - 🔒 **Controle parental** ✅ 
 - 👥 **Gerenciamento de usuário** ✅
+
+## 🛠️☑️ **Refatoração**
+
+### ⚒️ **Mudanças significativas**
+- **Mudança de armazenamento**: Os anúncios e mídias disponíveis agora se encontram num .JSON à parte da lógica do programa.
+- **Melhoria da lógica de recomendação**: As recomendações do sistema agora sugerem títulos similares, e não só um gênero. Além de que, para aqueles que não têm histórico de exibição, ele recomenda os mais "populares".
+- **Avaliação**: O usuário, antes de fazer uma avaliação, tem que ter assistido a mídia em questão. Além disso, agora o sistema possui um ID para cada filme/série; ou seja, para cada título, há uma avaliação referente à ele. 
+- **Serviço de vários dispositivos**: Assim como num sistema real de streaming, o número de aparelhos simultâneos em execução é limitado. Se o número exceder, então nao é possível iniciar uma sessão nova. (Implementação meio inutil, mas meh).
+<!-- - ****: 
+- ****: 
+- ****: 
+- ****:  -->
+
+### 🧮 **Mudanças menores**
+- **Transições**: O tempo de transição entre "telas" era muito grande e custoso. Esse mesmo tempo foi reduzido.
+- **Cancelar ação**: Apesar do sistema já dar a possibilidade de abortar determinada ação, ele nunca informa que você pode usar o enter para cancelar uma atividade. Esses prints foram implementados. 
+- **Perfil Inexistente**: O sistema agora sabe quando um perfil digitado não existe, e informa isso ao usuário.
+- **Histórico por perfil**: Em alguns casos, o sistema não sabia diferenciar qual perfil havia assistido determinado conteúdo; e então dava o mesmo histório para todos os perfis. 
+- **Caixas de texto**: Apenas uma correção visual. O programa agora imprime as caixas de informação de modo mais arrumado.
 
 ---
 
@@ -51,19 +70,5 @@ python main.py
 - **BandaLarga**: Template para a manuntenção da banda larga e a qualidade da transmissão enquanto a pessoa assiste;
 - **Avaliacoes**: Template para avaliações e reviews sobre um certo conteúdo em uma mini-rede social;
 
----
 
-## 🛠️ **Refatoração**
 
-### ⚒️ **Mudanças significativas**
-- **Mudança de armazenamento**: Os anúncios e mídias disponíveis agora se encontram num .JSON à parte da lógica do programa.
-- **Melhoria da lógica de recomendação**: As recomendações do sistema agora sugerem títulos similares, e não só um gênero.
-- **Avaliação**: O usuário, antes de fazer uma avaliação, tem que ter assistido a mídia em questão.
-- ****: 
-
-### 🧮 **Mudanças menores**
-- **Transições**:
-- **Cancelar ação**:
-- **Perfil Inexistente**:
-- **Streaming por perfil**:
-- **Caixas de texto**: 
