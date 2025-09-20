@@ -51,26 +51,27 @@ class StreamingSession:
 
         if not self.usuario.perfis:
             print("Nenhum perfil de usuário encontrado. Crie um perfil antes de iniciar a sessão de múltiplo streaming.")
-            time.sleep(2)
+            time.sleep(1.5)
             limpar_tela()
             return
         
+        print("Perfis disponíveis:")
         for p in self.usuario.perfis:
             print(f" - {p.nome_perfil}")
 
-        print("Digite o nome do perfil que deseja usar:")
-    
-        nome_perfil = input().strip()
-        self.perfil_atual = next((p for p in self.usuario.perfis if p.nome_perfil == nome_perfil), None)
-        if not self.perfil_atual:
-            print("Perfil não encontrado.")
-            time.sleep(2)
+        nome_perfil = input("\nDigite o nome do perfil que deseja usar: ").strip()
+        
+        perfil_obj = self.usuario.obter_perfil_por_nome(nome_perfil)
+        
+        if not perfil_obj:
+            print(f"Perfil '{nome_perfil}' não encontrado.")
+            time.sleep(1.5)
             limpar_tela()
             return
-        
+            
         self.sessao_ativa = True
-        self.perfil_atual = nome_perfil
-        self.midia_atual = self.usuario.ultimo_conteudo_assistido
+        self.perfil_atual = perfil_obj.nome_perfil
+        self.midia_atual = perfil_obj.ultimo_conteudo_assistido
 
         print(f"Sessão de streaming iniciada para o perfil {self.perfil_atual}.")
         if self.midia_atual:
@@ -79,7 +80,10 @@ class StreamingSession:
                 dispositivo.notificar_dispositivo(f"Iniciando reprodução de '{self.midia_atual}' no seu dispositivo.")
             input("Pressione Enter para continuar...")
         else:
+            print(f"Nenhum conteúdo foi assistido recentemente no perfil '{self.perfil_atual}'.")
             print("Selecione algo para assistir antes! A sua última mídia assistida será transmitida no seu dispositivo.")
+            self.sessao_ativa = False 
+            input("Pressione Enter para continuar...")
 
     def encerrar_sessao(self):
         if not self.sessao_ativa:
@@ -101,12 +105,18 @@ class StreamingSession:
 
         self.listar_dispositivos()
         try:
-            dispositivo_id = int(input("Digite o ID do dispositivo a ser removido: "))
-            dispositivo = next(d for d in self.dispositivos if d.identificador == dispositivo_id)
-            self.dispositivos.remove(dispositivo)
-            print(f"Dispositivo {dispositivo} removido da sessão de streaming.")
-        except (ValueError, StopIteration):
-            print("ID de dispositivo inválido.")
+            dispositivo_id_str = input("Digite o ID do dispositivo a ser removido (ou pressione Enter para cancelar): ")
+            if not dispositivo_id_str:
+                return
+            dispositivo_id = int(dispositivo_id_str)
+            dispositivo = next((d for d in self.dispositivos if d.identificador == dispositivo_id), None)
+            if dispositivo:
+                self.dispositivos.remove(dispositivo)
+                print(f"Dispositivo {dispositivo} removido da sessão de streaming.")
+            else:
+                print("ID de dispositivo não encontrado.")
+        except ValueError:
+            print("ID de dispositivo inválido. Deve ser um número.")
 
     def listar_dispositivos(self):
         if not self.dispositivos:
@@ -134,13 +144,13 @@ class StreamingSession:
 
             if opcao == "1":
                 self.iniciar_sessao()
-                time.sleep(2)
+                time.sleep(1)
             elif opcao == "2":
                 self.encerrar_sessao()
-                time.sleep(2)
+                time.sleep(1)
             elif opcao == "3":
                 self.adicionar_dispositivo()
-                time.sleep(2.5)
+                time.sleep(1.5)
             elif opcao == "4":
                 self.remover_dispositivo()
                 time.sleep(1)
@@ -152,5 +162,5 @@ class StreamingSession:
                 break
             else:
                 print("Opção inválida. Tente novamente.")
-                time.sleep(2)
+                time.sleep(1)
                 limpar_tela()

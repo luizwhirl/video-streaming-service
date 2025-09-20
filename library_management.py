@@ -62,18 +62,18 @@ class Midia(ABC):
             status = "❌ Não Assistido"
         return status
 
-    def assistir(self, usuario):
+    def assistir(self, usuario, perfil):
         usuario.conteudos_vistos += 1
         if usuario.plano.limite_diario < usuario.conteudos_vistos:
             print("Limite diário de visualizações atingido. Assista um anúncio para redefinir esse limite.")
             print("Deseja assistir o anuncio? (s/n)")
             resposta = input().strip().lower()
             if resposta == "s":
-                time.sleep(2)
+                time.sleep(1)
                 limpar_tela()
                 redefinir_limite_diario(usuario)
                 print("Limite redefinido com sucesso!")
-                time.sleep(2)
+                time.sleep(1.5)
                 limpar_tela()
             else:
                 return 
@@ -86,7 +86,7 @@ class Midia(ABC):
             # marcação de estado
             self.assistido = True
             self.ultima_exibicao = datetime.datetime.now()
-            usuario.ultimo_conteudo_assistido = self.titulo
+            perfil.ultimo_conteudo_assistido = self.titulo # 
 
             # avaliação de banda antes de começar
             usuario.otimizacao_banda_larga.ajustar_qualidade(usuario)
@@ -107,7 +107,7 @@ class Midia(ABC):
                     print("Pressione Enter para continuar.")
                     continue
             else:
-                input("Pressione Enter para parar de assistir.")
+                input("Pressione Enter para pausar.")
                 limpar_tela()
 
             print("Conteúdo pausado. O que deseja fazer?")
@@ -128,7 +128,7 @@ class Midia(ABC):
             elif escolha == "3":
                 print(f"\nVocê parou de assistir {self.titulo}.")
                 print("Obrigado por assistir!")
-                time.sleep(2)
+                time.sleep(1.5)
                 limpar_tela()
                 break
             else:
@@ -152,7 +152,7 @@ class Midia(ABC):
         input()
         print(f"\nVocê parou de assistir {self.titulo}.")
         print("Obrigado por assistir!")
-        time.sleep(2)
+        time.sleep(1.5)
         limpar_tela()
 
 
@@ -229,7 +229,7 @@ class Anime(Midia):
         print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
         print("╚" + "═" * 50 + "╝")
 
-    
+
 def todas_as_midias():
     midias = []
 
@@ -366,12 +366,17 @@ def Explorar_Conteudo(usuario):
     continuar = usuario.listar_perfis()
     if not continuar:
         return
-    nome_perfil = input("Digite o nome do perfil: ")
-    perfil = usuario.obter_perfil_por_nome(nome_perfil) 
+    nome_perfil = input("Digite o nome do perfil (ou pressione Enter para voltar): ")
+    if not nome_perfil:
+        return
+        
+    perfil = usuario.obter_perfil_por_nome(nome_perfil)  
     if perfil is None:
         print(f"Perfil '{nome_perfil}' não encontrado. Por favor, tente novamente.")
+        time.sleep(1.5)
         return
     print(f"Bem-vindo(a), {perfil.nome_perfil}!\n")
+    time.sleep(1)
 
     catalogo = obter_catalogo_do_perfil(perfil)
     
@@ -400,6 +405,7 @@ def Explorar_Conteudo(usuario):
                     midia.exibir_informacoes()
             else:
                 print("Nenhum conteúdo encontrado.")
+            input("\nPressione Enter para continuar...")
 
         elif escolha == "2":
             limpar_tela()
@@ -411,17 +417,19 @@ def Explorar_Conteudo(usuario):
                     midia.exibir_informacoes()
             else:
                 print("Nenhum conteúdo encontrado.")
+            input("\nPressione Enter para continuar...")
 
         elif escolha == "3":
             limpar_tela()
             catalogo.navegar()
+            input("\nPressione Enter para continuar...")
         elif escolha == "4":
             titulo = input("Digite o título do conteúdo que deseja assistir: ")
             resultados = catalogo.buscar_por_titulo(titulo)
 
             if not resultados:
                 print("Conteúdo não encontrado.")
-                time.sleep(2)
+                time.sleep(1.5)
                 limpar_tela()
                 continue
 
@@ -431,14 +439,16 @@ def Explorar_Conteudo(usuario):
                 midia.exibir_informacoes()
                 print()
 
-            escolha_conteudo = input("Digite o número do conteúdo que deseja assistir: ")
+            escolha_conteudo = input("Digite o número do conteúdo que deseja assistir (ou pressione Enter para cancelar): ")
+            if not escolha_conteudo:
+                continue
 
             if escolha_conteudo.isdigit():
                 indice = int(escolha_conteudo) - 1
                 if 0 <= indice < len(resultados):
                     conteudo_escolhido = resultados[indice]
                     usuario.otimizacao_banda_larga.auto_ajuste = True
-                    conteudo_escolhido.assistir(usuario)
+                    conteudo_escolhido.assistir(usuario, perfil) 
                     perfil.historico.adicionar_no_historico(conteudo_escolhido)
                     perfil.recomendacoes.adicionar_conteudo(conteudo_escolhido.genero)
                 else:
@@ -453,6 +463,9 @@ def Explorar_Conteudo(usuario):
 
         else:
             print("Opção inválida. Tente novamente.")
+            time.sleep(1)
+        limpar_tela()
+
 
 def Explorar_Conteudo_Convidado():
     print("Bem-vindo(a) ao modo convidado!")
@@ -482,7 +495,7 @@ def Explorar_Conteudo_Convidado():
             # Limitar resultados para convidados: mostrar no máximo 3 opções
             if not resultados:
                 print("Conteúdo não encontrado.")
-                time.sleep(2)
+                time.sleep(1.5)
                 limpar_tela()
                 continue
 

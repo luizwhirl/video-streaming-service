@@ -12,14 +12,13 @@ class Historico:
         if midia in self.historico:
             self.historico.remove(midia)
 
-        self.historico.append(midia)
+        self.historico.insert(0, midia) # Insere no início para mostrar os mais recentes primeiro
 
     def exibir_historico(self):
         if self.historico == []:
             print("Seu histórico está vazio. Assista algum conteúdo primeiro.")
         else:
             print("Recém-reproduzidos:")
-
             for midia in self.historico:
                 midia.exibir_informacoes()
                 
@@ -46,11 +45,13 @@ class Marcar:
         
         if midia.assistido is False:
             self.marcados.append(midia)
+            print("Conteúdo marcado com sucesso.")
         else:
             print("Você já assistiu a este conteúdo. Deseja marcar para assistir depois novamente?")
             resposta = input("Digite '1' para sim ou '2' para não: ")
             if resposta == '1':
                 self.marcados.append(midia)
+                print("Conteúdo marcado com sucesso.")
             else:
                 print("Conteúdo não marcado.")
                 
@@ -73,16 +74,21 @@ def obter_catalogo_do_perfil(perfil) -> ConjuntoMidias:
     return perfil.catalogo
 
 def bookmarking(usuario):
+    limpar_tela()
     print("Selecione um perfil:")
     continuar = usuario.listar_perfis()
     if not continuar:
         return
-    nome_perfil = input("Digite o nome do perfil: ")
-    perfil = usuario.obter_perfil_por_nome(nome_perfil) 
+    nome_perfil = input("Digite o nome do perfil (ou pressione Enter para voltar): ")
+    if not nome_perfil:
+        return
+        
+    perfil = usuario.obter_perfil_por_nome(nome_perfil)  
     if perfil is None:
         print(f"Perfil '{nome_perfil}' não encontrado. Por favor, tente novamente.")
         return
 
+    limpar_tela()
     print("╔" + "═" * 50 + "╗")
     print("O que deseja fazer?")
     print("1. Marcar conteúdo")
@@ -95,15 +101,20 @@ def bookmarking(usuario):
         catalogo = obter_catalogo_do_perfil(perfil)
 
         while True:
-            print("Digite o nome do conteúdo que deseja marcar:")
-            titulo = input()
+            titulo = input("Digite o nome do conteúdo que deseja marcar (ou pressione Enter para cancelar):")
+            if not titulo:
+                break
+                
             try:
                 resultados = catalogo.buscar_por_titulo(titulo)
             except Exception as e:
                 print(f"Ocorreu um erro ao buscar o conteúdo: {e}")
-                time.sleep(2)
-                limpar_tela()
+                time.sleep(1.5)
                 break
+
+            if not resultados:
+                print("Nenhum conteúdo encontrado com esse título.")
+                continue
 
             print("\nConteúdos encontrados:\n")
             for idx, midia in enumerate(resultados):
@@ -111,14 +122,15 @@ def bookmarking(usuario):
                 midia.exibir_informacoes()
                 print()
 
-            escolha_conteudo = input("Digite o número do conteúdo que deseja assistir: ")
+            escolha_conteudo = input("Digite o número do conteúdo que deseja marcar (ou pressione Enter para cancelar): ")
+            if not escolha_conteudo:
+                break
 
             if escolha_conteudo.isdigit():
                 indice = int(escolha_conteudo) - 1
                 if 0 <= indice < len(resultados):
                     midia_selecionada = resultados[indice]
                     perfil.marcar.marcar_conteudo(midia_selecionada)
-                    print("Conteúdo marcado com sucesso.")
                     break
                 else:
                     print("Opção inválida.")
@@ -130,7 +142,10 @@ def bookmarking(usuario):
         print("Conteúdos marcados:")
         perfil.marcar.listar_marcados()
 
-        titulo = input("Digite o título do conteúdo que deseja desmarcar: ")
+        titulo = input("Digite o título do conteúdo que deseja desmarcar (ou pressione Enter para cancelar): ")
+        if not titulo:
+            return
+        
         midia_para_desmarcar = None
         for midia in perfil.marcar.marcados:
             if midia.titulo.lower() == titulo.lower():

@@ -28,7 +28,6 @@ class User:
         self._multiplo_streaming = StreamingSession(self)
         self._otimizacao_banda_larga = BandaLarga()
         self._conteudos_vistos = 0
-        self._ultimo_conteudo_assistido = None
         
         # Usa os setters para validação
         self.nome = nome
@@ -100,10 +99,6 @@ class User:
         if value < 0:
             raise ValueError("Número de conteúdos vistos não pode ser negativo")
         self._conteudos_vistos = value
-
-    @property
-    def ultimo_conteudo_assistido(self):
-        return self._ultimo_conteudo_assistido
     
     @property
     def multiplo_streaming(self):
@@ -112,10 +107,6 @@ class User:
     @property
     def otimizacao_banda_larga(self):
         return self._otimizacao_banda_larga
-
-    @ultimo_conteudo_assistido.setter
-    def ultimo_conteudo_assistido(self, value):
-        self._ultimo_conteudo_assistido = value
 
     def adicionar_perfil(self, nome, controle_parental=False):
         if len(self._perfis) >= self._plano.maximo_perfis:
@@ -153,6 +144,9 @@ class User:
             
             if escolha == "1":
                 nome = input("Digite o nome do novo perfil: ")
+                if not nome:
+                    print("Criação de perfil cancelada.")
+                    return False
                 self.adicionar_perfil(nome)
                 return True
             if escolha == "2":
@@ -197,7 +191,7 @@ class User:
                     break
                 else:
                     print("Opção inválida.")
-                time.sleep(2)
+                time.sleep(1)
                 limpar_tela()
 
             elif self.plano.nome == "Básico":
@@ -225,7 +219,7 @@ class User:
                     break
                 else:
                     print("Opção inválida.")
-                time.sleep(2)
+                time.sleep(1)
                 limpar_tela()
                 
             elif self.plano.nome == "Premium":
@@ -242,14 +236,14 @@ class User:
                     if len(self.perfis) > 5:
                         self._perfis = self._perfis[:5]
                     print("Plano cancelado. Voltando ao plano Gratuito.")
-                    time.sleep(2)
+                    time.sleep(1)
                     limpar_tela()
                 elif escolha == "2":
                     print("Voltando ao menu de configurações...")
                     break
                 else:
                     print("Opção inválida.")
-                time.sleep(2)
+                time.sleep(1)
                 limpar_tela()
 
     def ativar_controle_parental(self, perfil):
@@ -283,8 +277,9 @@ class Perfil:
         self.recomendacoes = Recomendacoes()
         self.historico = Historico()
         self.marcar = Marcar()
-        self.idade_limite = 18 # idade limite padrão
+        self.idade_limite = 18 
         self.catalogo = None
+        self.ultimo_conteudo_assistido = None 
 
     def __str__(self):
         return f"Perfil: {self.nome_perfil}, Controle Parental: {'Ativado' if self.controle_parental else 'Desativado'}"
@@ -294,7 +289,7 @@ class Plano:
         self.nome = nome
         self.preco = preco
         self.beneficios = []
-        self.anuncios = True 
+        self.anuncios = True  
         self.limite_diario = 10
         self.alta_definicao = False
         self.multiplos_dispositivos = False
@@ -395,17 +390,17 @@ class Plano:
             print("Pagamento com Pix selecionado.")
 
         print(f"Processando pagamento para o plano {nome_plano} com a forma de pagamento selecionada...")
-        time.sleep(2)  
+        time.sleep(1.5)  
         pagamento_aprovado = True  
 
         if pagamento_aprovado:
             print("Pagamento aprovado!")
             self.trocar_plano(nome_plano)
             print(f"Plano alterado para: {self.nome}")
-            time.sleep(3)
+            time.sleep(2)
         else:
             print("Pagamento recusado. Tente novamente.")
-            time.sleep(2)
+            time.sleep(1.5)
 
     def cancelar_plano(self):
         print("Você tem certeza que deseja cancelar o plano?")
@@ -414,11 +409,13 @@ class Plano:
         resposta = input("Digite 'sim' para confirmar ou 'não' para cancelar: ")
         if resposta.lower() == "sim":
             self.plano_gratuito()
-            time.sleep(2)
+            time.sleep(1.5)
             print("Plano cancelado com sucesso.")
+            return True
         else:
-            time.sleep(2)
+            time.sleep(1.5)
             print("Cancelamento do plano abortado.")
+            return False
 
     def trocar_plano(self, nome):
         if nome == "Gratuito":

@@ -50,3 +50,14 @@ python main.py
 - **Devices**: Template para a organização de streaming em multiplataforma;
 - **BandaLarga**: Template para a manuntenção da banda larga e a qualidade da transmissão enquanto a pessoa assiste;
 - **Avaliacoes**: Template para avaliações e reviews sobre um certo conteúdo em uma mini-rede social;
+
+## 🛠️ **Refatoração**
+
+### 🧮 **Mudanças menores**
+- **Transições**:
+- **Cancelar ação**:
+- **Perfil Inexistente**:
+- **Streaming por perfil**:
+
+
+### ⚒️ **Mudanças significativas**

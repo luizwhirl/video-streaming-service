@@ -41,7 +41,7 @@ def criar_conta():
                 if usuario.email == email:
                     print("Esse email já foi registrado. Tente novamente.")
                     continue
-                
+                    
             print("Digite sua senha:")
             senha = input()
             print("Confirme sua senha:")
@@ -59,12 +59,12 @@ def criar_conta():
         except ValueError as e:
             print(f"Erro: {e}")
             print("Tente novamente.")
-            time.sleep(2)
+            time.sleep(1.5)
             continue
         except Exception as e:
             print(f"Erro inesperado: {e}")
             print("Tente novamente.")
-            time.sleep(2)
+            time.sleep(1.5)
             continue
 
 def fazer_login(usuarios_registrados):
@@ -74,6 +74,7 @@ def fazer_login(usuarios_registrados):
     for usuario in usuarios_registrados:
         if usuario.login(nome, senha):
             print(f"Login bem-sucedido! Bem-vindo, {usuario.nome}.")
+            time.sleep(1)
             return usuario
 
     print("Usuário ou senha incorretos.")
@@ -85,52 +86,53 @@ def fazer_login(usuarios_registrados):
         return fazer_login(usuarios_registrados)
     elif opcao == "2":
         limpar_tela()
-        menu_inicial()
+        return None 
     else:
         print("Opção inválida. Tente novamente.")
-        time.sleep(2)
+        time.sleep(1)
         limpar_tela()
         return fazer_login(usuarios_registrados)
 
 def menu_inicial():
-    print("╔══════════════════════════════╗")
-    print("║ Bem-vindo ao VStreamingHub!  ║")
-    print("╚══════════════════════════════╝\n")
-
-    print("Deseja criar uma conta ou fazer login?\n")
-
-    print("╔══════════════════════════════╗")
-    print("║ 1. Criar conta               ║")
-    print("║ 2. Fazer login               ║")
-    print("║ 3. Continuar como convidado  ║")
-    print("║ 4. Sair                      ║")
-    print("╚══════════════════════════════╝")
-
-    opcao = input("Escolha uma opção (1-4):\n ")
-    if opcao == "1":
+    while True: 
         limpar_tela()
-        criar_conta()
-        time.sleep(2)
-        limpar_tela()
-        menu_inicial()
+        print("╔══════════════════════════════╗")
+        print("║ Bem-vindo ao VStreamingHub!  ║")
+        print("╚══════════════════════════════╝\n")
+
+        print("Deseja criar uma conta ou fazer login?\n")
+
+        print("╔══════════════════════════════╗")
+        print("║ 1. Criar conta               ║")
+        print("║ 2. Fazer login               ║")
+        print("║ 3. Continuar como convidado  ║")
+        print("║ 4. Sair                      ║")
+        print("╚══════════════════════════════╝")
+
+        opcao = input("Escolha uma opção (1-4):\n ")
+        if opcao == "1":
+            limpar_tela()
+            criar_conta()
+            time.sleep(1.5)
         
-    elif opcao == "2":
-        limpar_tela()
-        menu_principal()
-    elif opcao == "3":
-        limpar_tela()
-        menu_principal_convidado()
-    elif opcao == "4":
-        print("Saindo do Video Streaming Service. Até logo!\n")
-        exit()
-    else:
-        print("Opção inválida. Tente novamente.")
-        time.sleep(2)
-        limpar_tela()
-        menu_inicial()
+        elif opcao == "2":
+            limpar_tela()
+            usuario_logado = fazer_login(usuarios_registrados)
+            if usuario_logado:
+                menu_principal(usuario_logado)
+        elif opcao == "3":
+            limpar_tela()
+            menu_principal_convidado()
+        elif opcao == "4":
+            print("Saindo do Video Streaming Service. Até logo!\n")
+            exit()
+        else:
+            print("Opção inválida. Tente novamente.")
+            time.sleep(1)
 
 def menu_config_usuario(usuario):
     while True:
+        limpar_tela()
         print("Configurações de usuário:\n")
         print("╔" + "═" * 50 + "╗")
         print("1. Gerenciar meus perfis\n")
@@ -141,10 +143,10 @@ def menu_config_usuario(usuario):
 
         opcao_usuario = input("Escolha uma opção (1-4):\n ")
         
-        if opcao_usuario == "1":       
+        if opcao_usuario == "1":    
             limpar_tela()
             if usuario.listar_perfis():
-                print("Deseja adicionar ou remover um perfil?")
+                print("\nDeseja adicionar ou remover um perfil?")
                 print("╔" + "═" * 50 + "╗")
                 print("1. Adicionar perfil")
                 print("2. Remover perfil")
@@ -154,20 +156,19 @@ def menu_config_usuario(usuario):
 
                 if escolha_perfil == "1":
                     limpar_tela()
-                    nome_perfil = input("Digite o nome do novo perfil: ")
-                    usuario.adicionar_perfil(nome_perfil)
-                    time.sleep(2)
-                    limpar_tela()
+                    nome_perfil = input("Digite o nome do novo perfil (ou pressione Enter para cancelar): ")
+                    if nome_perfil:
+                        usuario.adicionar_perfil(nome_perfil)
+                    time.sleep(1.5)
                 elif escolha_perfil == "2":
                     limpar_tela()
                     print("Perfis disponíveis para remoção:")
                     usuario.listar_perfis()
-                    nome_perfil = input("Digite o nome do perfil a ser removido: ")
-                    usuario.remover_perfil(nome_perfil)
-                    time.sleep(2)
-                    limpar_tela()
+                    nome_perfil = input("Digite o nome do perfil a ser removido (ou pressione Enter para cancelar): ")
+                    if nome_perfil:
+                        usuario.remover_perfil(nome_perfil)
+                    time.sleep(1.5)
                 elif escolha_perfil == "3":
-                    limpar_tela()
                     continue
                 else:
                     print("Opção inválida. Tente novamente.")
@@ -177,12 +178,8 @@ def menu_config_usuario(usuario):
         elif opcao_usuario == "2":
             limpar_tela()
             usuario.gerenciar_plano()
-            time.sleep(2)
-            limpar_tela()
         elif opcao_usuario == "3":
-
             limpar_tela()
-
             while True:
                 print("Configurações de Controle Parental:\n")
                 print("╔" + "═" * 150 + "╗")
@@ -196,225 +193,196 @@ def menu_config_usuario(usuario):
                 escolha = input("Escolha uma opção (1-4):\n ")
 
                 if escolha == "1":
-                    limpar_tela()
-
                     while True:
                         limpar_tela()
                         outro_perfil = select_profile_for_parental_control(usuario)
-                        time.sleep(2)
+                        time.sleep(1.5)
                         if outro_perfil:
                             print("Deseja ativar o controle parental para outro perfil?" \
                                 "\n1. Sim\n2. Não")
                             escolha_controle = input("Escolha uma opção (1-2):\n ")
 
                             if escolha_controle == "1":
-                                limpar_tela()
                                 continue  
                             elif escolha_controle == "2":
-                                limpar_tela()
                                 break  
                             else:
                                 print("Opção inválida. Tente novamente.")
-                                time.sleep(2)
+                                time.sleep(1)
                         else:
-                            
-                            limpar_tela()
                             break
                 elif escolha == "2":
                     limpar_tela()
                     select_profile_for_not_parental_control(usuario)
-                    time.sleep(2)
-                    limpar_tela()
+                    time.sleep(1.5)
                 elif escolha == "3":
                     limpar_tela()
                     restringir_conteudo(usuario)
-                    time.sleep(2)
-                    limpar_tela()
+                    time.sleep(1.5)
                 elif escolha == "4":
-                    limpar_tela()
                     break
                 else:
                     print("Opção inválida. Tente novamente.")
-                    time.sleep(2)
-                    limpar_tela()
-
+                    time.sleep(1)
+        
         elif opcao_usuario == "4":
-            limpar_tela()
             break
         else:
             print("Opção inválida. Tente novamente.")
-            time.sleep(2)
-            limpar_tela()
+            time.sleep(1)
 
 def menu_principal_convidado():
-    print("Bem-vindo, convidado!\n"
-          "Você pode explorar o conteúdo, porém o resto das funcionalidades estão limitadas. Crie uma conta para ter acesso completo aos nossos serviços.\n"
-          "O que você gostaria de fazer?\n"
-          )
-    print("╔" + "═" * 50 + "╗")
-    print("1. Consultar biblioteca de conteúdo\n")
-    print("2. Voltar ao menu inicial")
-    print("╚" + "═" * 50 + "╝")
+    while True:
+        limpar_tela()
+        print("Bem-vindo, convidado!\n"
+            "Você pode explorar o conteúdo, porém o resto das funcionalidades estão limitadas. Crie uma conta para ter acesso completo aos nossos serviços.\n"
+            "O que você gostaria de fazer?\n"
+            )
+        print("╔" + "═" * 50 + "╗")
+        print("1. Consultar biblioteca de conteúdo\n")
+        print("2. Voltar ao menu inicial")
+        print("╚" + "═" * 50 + "╝")
 
-    opcao = input("Escolha uma opção (1-2):\n ")
-    if opcao == "1":
-        limpar_tela()
-        print("Consultando biblioteca de conteúdo...\n")
-        time.sleep(2)
-        limpar_tela()
-        Explorar_Conteudo_Convidado()
-        print("Você pode criar uma conta para acessar mais funcionalidades.\n")
-        time.sleep(2)
-        limpar_tela()
-        menu_principal_convidado()
-    elif opcao == "2":
-        limpar_tela()
-        menu_inicial()
-    else:
-        print("Opção inválida. Tente novamente.")
-        time.sleep(2)
-        limpar_tela()
-        menu_principal_convidado()
-
-
-def menu_principal(usuario=None):
-    limpar_tela()
-    if usuario is None:
-        usuario = fazer_login(usuarios_registrados)
-    limpar_tela()
-
-    print(f"Bem-vindo ao Video Streaming Service, {usuario.nome}!\n"
-          "O que você gostaria de fazer?\n"
-          )
-    print("╔" + "═" * 50 + "╗")
-    print("  1. 🎬 Consultar biblioteca de conteúdo")
-    print("  2. ⚙️ Configurações de usuário")
-    print("  3. ⭐ Recomendações personalizadas")
-    print("  4. 📺 Streaming em múltiplos dispositivos")
-    print("  5. 📚 Marcar conteúdo e histórico de visualização")
-    print("  6. 📝 Revisões e avaliações de conteúdo")
-    print("  7. 🚪 Logout")
-    print("╚" + "═" * 50 + "╝")
-
-    opcao = input("Escolha uma opção (1-7):\n ")
-
-    if opcao == "1":
-        limpar_tela()
-        print("Consultando biblioteca de conteúdo...\n")
-        time.sleep(2)
-        limpar_tela()
-        Explorar_Conteudo(usuario)
-        menu_principal(usuario)
-    elif opcao == "2":
-        limpar_tela()
-        menu_config_usuario(usuario)
-        menu_principal(usuario)
-
-    elif opcao == "3":
-        limpar_tela()
-        print("Selecione o perfil para visualizar recomendações personalizadas:\n")
-        booleano = usuario.listar_perfis() 
-        if booleano:
-            nome_perfil = input("Digite o nome do perfil: ")
-            perfil = usuario.obter_perfil_por_nome(nome_perfil)
-        else:
-            menu_principal(usuario)
-
-        if perfil:
-            perfil.recomendacoes.recomendar_conteudo(usuario)
-        else:
-            print("Perfil não encontrado.")
-
-        time.sleep(2)
-        limpar_tela()
-        menu_principal(usuario)
-    elif opcao == "4":
-        limpar_tela()
-        usuario.multiplo_streaming.menu_de_streaming()
-        time.sleep(2)
-        limpar_tela()
-        menu_principal(usuario)
-
-    elif opcao == "5":
-        limpar_tela()
-        while True:
-            print("Marcação de conteúdo e histórico de visualização:\n")
-            print("╔" + "═" * 50 + "╗")
-            print("1. Ver histórico de exibição\n")
-            print("2. Limpar histórico de exibição\n")
-            print("3. Opções de Bookmarking\n")
-            print("4. Voltar ao menu principal")
-            print("╚" + "═" * 50 + "╝")
-            opcao_historico = input("Escolha uma opção (1-4):\n ")
-            if opcao_historico == "1":
-                limpar_tela()
-                print("Selecione o perfil para acessar o histórico:\n")
-                usuario.listar_perfis()
-                nome_perfil = input("Digite o nome do perfil: ")
-                perfil = usuario.obter_perfil_por_nome(nome_perfil)
-
-                if perfil:
-                    ver_historico_de_exibicao(perfil.historico)
-                    input("Pressione Enter para voltar...")
-                else:
-                    print("Perfil não encontrado.")
-                limpar_tela()
-                continue 
-        
-            elif opcao_historico == "2":
-                print("Selecione o perfil para acessar o histórico:\n")
-                usuario.listar_perfis()
-                nome_perfil = input("Digite o nome do perfil: ")
-                perfil = usuario.obter_perfil_por_nome(nome_perfil)
-
-                if perfil:
-                    limpar_historico(perfil.historico)
-                    print("Histórico de exibição limpo com sucesso!\n")
-                    input("Pressione Enter para continuar...")
-                else:
-                    print("Perfil não encontrado.")
-                limpar_tela()
-                continue
-            elif opcao_historico == "3":
-                bookmarking(usuario)
-                input("Pressione Enter para continuar...")
-                limpar_tela()
-            elif opcao_historico == "4":
-                break   
-        limpar_tela()
-        menu_principal(usuario)
-    elif opcao == "6":
-        processo_para_avaliar(usuario, reviews)
-        limpar_tela()
-        menu_principal(usuario)
-
-    elif opcao == "7":
-        limpar_tela()
-        print("Você escolheu sair.\n")
-        print("Tem certeza de que deseja sair?\n"
-              "1. Sim\n"
-              "2. Não\n")
-        opcao_logout = input("")
-        if opcao_logout == "1":
-            print("Desconectando...\n")
-            time.sleep(2)
+        opcao = input("Escolha uma opção (1-2):\n ")
+        if opcao == "1":
             limpar_tela()
-            menu_inicial()
-        elif opcao_logout == "2":
-            print("Retornando ao menu principal...\n")
-            time.sleep(2)
+            print("Consultando biblioteca de conteúdo...\n")
+            time.sleep(1)
             limpar_tela()
-            menu_principal(usuario)
+            Explorar_Conteudo_Convidado()
+            print("Você pode criar uma conta para acessar mais funcionalidades.\n")
+            time.sleep(1.5)
+        elif opcao == "2":
+            break
         else:
             print("Opção inválida. Tente novamente.")
-            time.sleep(2)
-            limpar_tela()
-            menu_principal(usuario)
-    else:
-        print("Opção inválida. Tente novamente.")
-        time.sleep(2)
+            time.sleep(1)
+
+
+def menu_principal(usuario):
+    while True:
         limpar_tela()
-        menu_principal(usuario)
+        print(f"Bem-vindo ao Video Streaming Service, {usuario.nome}!\n"
+            "O que você gostaria de fazer?\n"
+            )
+        print("╔" + "═" * 50 + "╗")
+        print("  1. 🎬 Consultar biblioteca de conteúdo")
+        print("  2. ⚙️ Configurações de usuário")
+        print("  3. ⭐ Recomendações personalizadas")
+        print("  4. 📺 Streaming em múltiplos dispositivos")
+        print("  5. 📚 Marcar conteúdo e histórico de visualização")
+        print("  6. 📝 Revisões e avaliações de conteúdo")
+        print("  7. 🚪 Logout")
+        print("╚" + "═" * 50 + "╝")
+
+        opcao = input("Escolha uma opção (1-7):\n ")
+
+        if opcao == "1":
+            limpar_tela()
+            print("Consultando biblioteca de conteúdo...\n")
+            time.sleep(1)
+            limpar_tela()
+            Explorar_Conteudo(usuario)
+        elif opcao == "2":
+            limpar_tela()
+            menu_config_usuario(usuario)
+
+        elif opcao == "3":
+            limpar_tela()
+            print("Selecione o perfil para visualizar recomendações personalizadas:\n")
+            booleano = usuario.listar_perfis()  
+            if not booleano:
+                time.sleep(1.5)
+                continue
+
+            nome_perfil = input("Digite o nome do perfil (ou pressione Enter para voltar): ")
+            if not nome_perfil:
+                continue
+                
+            perfil = usuario.obter_perfil_por_nome(nome_perfil)
+
+            if perfil:
+                perfil.recomendacoes.recomendar_conteudo(usuario)
+                input("\nPressione Enter para continuar...")
+            else:
+                print(f"Perfil '{nome_perfil}' não encontrado.")
+                time.sleep(1.5)
+
+        elif opcao == "4":
+            limpar_tela()
+            usuario.multiplo_streaming.menu_de_streaming()
+
+        elif opcao == "5":
+            limpar_tela()
+            while True:
+                print("Marcação de conteúdo e histórico de visualização:\n")
+                print("╔" + "═" * 50 + "╗")
+                print("1. Ver histórico de exibição\n")
+                print("2. Limpar histórico de exibição\n")
+                print("3. Opções de Bookmarking\n")
+                print("4. Voltar ao menu principal")
+                print("╚" + "═" * 50 + "╝")
+                opcao_historico = input("Escolha uma opção (1-4):\n ")
+                if opcao_historico == "1":
+                    limpar_tela()
+                    print("Selecione o perfil para acessar o histórico:\n")
+                    usuario.listar_perfis()
+                    nome_perfil = input("Digite o nome do perfil (ou pressione Enter para voltar): ")
+                    if not nome_perfil: continue
+                    perfil = usuario.obter_perfil_por_nome(nome_perfil)
+
+                    if perfil:
+                        ver_historico_de_exibicao(perfil.historico)
+                        input("\nPressione Enter para voltar...")
+                    else:
+                        print(f"Perfil '{nome_perfil}' não encontrado.")
+                        time.sleep(1.5)
+                
+                elif opcao_historico == "2":
+                    print("Selecione o perfil para acessar o histórico:\n")
+                    usuario.listar_perfis()
+                    nome_perfil = input("Digite o nome do perfil (ou pressione Enter para voltar): ")
+                    if not nome_perfil: continue
+                    perfil = usuario.obter_perfil_por_nome(nome_perfil)
+
+                    if perfil:
+                        limpar_historico(perfil.historico)
+                        input("Pressione Enter para continuar...")
+                    else:
+                        print(f"Perfil '{nome_perfil}' não encontrado.")
+                        time.sleep(1.5)
+                elif opcao_historico == "3":
+                    bookmarking(usuario)
+                    input("Pressione Enter para continuar...")
+                elif opcao_historico == "4":
+                    break
+                else:
+                    print("Opção inválida.")
+                    time.sleep(1)
+                limpar_tela()
+
+        elif opcao == "6":
+            processo_para_avaliar(usuario, reviews)
+        elif opcao == "7":
+            limpar_tela()
+            print("Você escolheu sair.\n")
+            print("Tem certeza de que deseja sair?\n"
+                "1. Sim\n"
+                "2. Não\n")
+            opcao_logout = input("")
+            if opcao_logout == "1":
+                print("Desconectando...\n")
+                time.sleep(1)
+                return 
+            elif opcao_logout == "2":
+                print("Retornando ao menu principal...\n")
+                time.sleep(1)
+            else:
+                print("Opção inválida. Tente novamente.")
+                time.sleep(1)
+        else:
+            print("Opção inválida. Tente novamente.")
+            time.sleep(1)
 
 if __name__ == "__main__":
     inicializar()
