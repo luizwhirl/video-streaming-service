@@ -133,5 +133,322 @@
     "tempo_duracao": 22,
     "episodios": 1200,
     "temporadas": 25
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Gladiador",
+    "genero": "Ação",
+    "classificacao": "16+",
+    "tempo_duracao": 155
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Matrix",
+    "genero": "Ação",
+    "classificacao": "14",
+    "tempo_duracao": 136
+  },
+  {
+    "tipo": "filme",
+    "titulo": "John Wick - De Volta ao Jogo",
+    "genero": "Ação",
+    "classificacao": "16",
+    "tempo_duracao": 101
+  },
+  {
+    "tipo": "filme",
+    "titulo": "O Cavaleiro das Trevas",
+    "genero": "Ação",
+    "classificacao": "12",
+    "tempo_duracao": 152
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Resgate",
+    "genero": "Ação",
+    "classificacao": "16",
+    "tempo_duracao": 116
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Django Livre",
+    "genero": "Ação",
+    "classificacao": "16",
+    "tempo_duracao": 165
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Uma Sexta-Feira Muito Louca",
+    "genero": "Comédia",
+    "classificacao": "10",
+    "tempo_duracao": 97
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Deadpool & Wolverine",
+    "genero": "Ação",
+    "classificacao": "16",
+    "tempo_duracao": 120
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Barbie",
+    "genero": "Comédia",
+    "classificacao": "12",
+    "tempo_duracao": 114
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Super Mario Bros. O Filme",
+    "genero": "Animação",
+    "classificacao": "Livre",
+    "tempo_duracao": 92
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Divertida Mente 2",
+    "genero": "Animação",
+    "classificacao": "Livre",
+    "tempo_duracao": 96
+  },
+  {
+    "tipo": "filme",
+    "titulo": "O Terminal",
+    "genero": "Drama",
+    "classificacao": "Livre",
+    "tempo_duracao": 128
+  },
+  {
+    "tipo": "filme",
+    "titulo": "À Procura da Felicidade",
+    "genero": "Drama",
+    "classificacao": "10",
+    "tempo_duracao": 117
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Um Sonho de Liberdade",
+    "genero": "Drama",
+    "classificacao": "14",
+    "tempo_duracao": 142
+  },
+  {
+    "tipo": "filme",
+    "titulo": "A Espera de um Milagre",
+    "genero": "Drama",
+    "classificacao": "16",
+    "tempo_duracao": 189
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Forrest Gump: O Contador de Histórias",
+    "genero": "Drama",
+    "classificacao": "12",
+    "tempo_duracao": 142
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Como Eu Era Antes de Você",
+    "genero": "Romance",
+    "classificacao": "12",
+    "tempo_duracao": 110
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Diário de uma Paixão",
+    "genero": "Romance",
+    "classificacao": "12",
+    "tempo_duracao": 123
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Psicose",
+    "genero": "Terror",
+    "classificacao": "14",
+    "tempo_duracao": 109
+  },
+  {
+    "tipo": "filme",
+    "titulo": "O Exorcista",
+    "genero": "Terror",
+    "classificacao": "16",
+    "tempo_duracao": 121
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Invocação do Mal",
+    "genero": "Terror",
+    "classificacao": "14",
+    "tempo_duracao": 112
+  },
+  {
+    "tipo": "filme",
+    "titulo": "Hereditário",
+    "genero": "Terror",
+    "classificacao": "16",
+    "tempo_duracao": 127
+  },
+  {
+    "tipo": "documentario",
+    "titulo": "Senna",
+    "genero": "Documentário",
+    "classificacao": "Livre",
+    "tempo_duracao": 106
+  },
+  {
+    "tipo": "documentario",
+    "titulo": "O Sal da Terra",
+    "genero": "Documentário",
+    "classificacao": "12",
+    "tempo_duracao": 110
+  },
+  {
+    "tipo": "documentario",
+    "titulo": "Cabra Marcado para Morrer",
+    "genero": "Documentário",
+    "classificacao": "12",
+    "tempo_duracao": 119
+  },
+  {
+    "tipo": "documentario",
+    "titulo": "Amy",
+    "genero": "Documentário",
+    "classificacao": "14",
+    "tempo_duracao": 128
+  },
+  {
+    "tipo": "anime",
+    "titulo": "One Piece",
+    "genero": "Animação",
+    "classificacao": "12",
+    "tempo_duracao": 24,
+    "episodios": 1200,
+    "temporadas": 20
+  },
+  {
+    "tipo": "anime",
+    "titulo": "Death Note",
+    "genero": "Animação",
+    "classificacao": "16",
+    "tempo_duracao": 23,
+    "episodios": 37,
+    "temporadas": 1
+  },
+  {
+    "tipo": "anime",
+    "titulo": "Demon Slayer",
+    "genero": "Animação",
+    "classificacao": "16",
+    "tempo_duracao": 24,
+    "episodios": 63,
+    "temporadas": 4
+  },
+  {
+    "tipo": "anime",
+    "titulo": "Jujutsu Kaisen",
+    "genero": "Animação",
+    "classificacao": "16",
+    "tempo_duracao": 23,
+    "episodios": 47,
+    "temporadas": 2
+  },
+  {
+    "tipo": "anime",
+    "titulo": "One-Punch Man",
+    "genero": "Animação",
+    "classificacao": "14",
+    "tempo_duracao": 24,
+    "episodios": 24,
+    "temporadas": 2
+  },
+  {
+    "tipo": "serie",
+    "titulo": "Breaking Bad",
+    "genero": "Drama",
+    "classificacao": "16",
+    "tempo_duracao": 60,
+    "episodios": 62,
+    "temporadas": 5
+  },
+  {
+    "tipo": "serie",
+    "titulo": "Stranger Things",
+    "genero": "Aventura",
+    "classificacao": "14",
+    "tempo_duracao": 55,
+    "episodios": 34,
+    "temporadas": 4
+  },
+  {
+    "tipo": "serie",
+    "titulo": "The Boys",
+    "genero": "Ação",
+    "classificacao": "18",
+    "tempo_duracao": 60,
+    "episodios": 32,
+    "temporadas": 4
+  },
+  {
+    "tipo": "serie",
+    "titulo": "Peacemaker",
+    "genero": "Ação",
+    "classificacao": "18",
+    "tempo_duracao": 45,
+    "episodios": 8,
+    "temporadas": 1
+  },
+  {
+    "tipo": "serie",
+    "titulo": "Chernobyl",
+    "genero": "Drama",
+    "classificacao": "16",
+    "tempo_duracao": 60,
+    "episodios": 5,
+    "temporadas": 1
+  },
+  {
+    "tipo": "serie",
+    "titulo": "The Crown",
+    "genero": "Drama",
+    "classificacao": "12",
+    "tempo_duracao": 60,
+    "episodios": 60,
+    "temporadas": 6
+  },
+  {
+    "tipo": "serie",
+    "titulo": "Friends",
+    "genero": "Comédia",
+    "classificacao": "12",
+    "tempo_duracao": 22,
+    "episodios": 236,
+    "temporadas": 10
+  },
+  {
+    "tipo": "serie",
+    "titulo": "The Big Bang Theory",
+    "genero": "Comédia",
+    "classificacao": "12",
+    "tempo_duracao": 22,
+    "episodios": 279,
+    "temporadas": 12
+  },
+  {
+    "tipo": "serie",
+    "titulo": "How I Met Your Mother",
+    "genero": "Comédia",
+    "classificacao": "12",
+    "tempo_duracao": 22,
+    "episodios": 208,
+    "temporadas": 9
+  },
+  {
+    "tipo": "serie",
+    "titulo": "Modern Family",
+    "genero": "Comédia",
+    "classificacao": "10",
+    "tempo_duracao": 22,
+    "episodios": 250,
+    "temporadas": 11
   }
 ]

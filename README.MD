@@ -15,11 +15,11 @@ python main.py
 
 - 📚 **Consultar biblioteca de conteúdo** ✅
 - 👤 **Configurações de usuário** ✅
-- 🤖 **Recomendações personalizadas** ✅
+- 🤖 **Recomendações personalizadas** ☑️
 - 📱 **Streaming em múltiplos dispositivos** ✅
 - ⚡ **Otimização de banda larga** ✅
 - ⭐ **Marcar conteúdo e histórico de visualização** ✅
-- 📝 **Revisões e avaliações de conteúdo**✅
+- 📝 **Revisões e avaliações de conteúdo**☑️
 - 📢 **Integração com anúncios** ✅
 - 🔒 **Controle parental** ✅ 
 - 👥 **Gerenciamento de usuário** ✅
@@ -55,15 +55,15 @@ python main.py
 
 ## 🛠️ **Refatoração**
 
+### ⚒️ **Mudanças significativas**
+- **Mudança de armazenamento**: Os anúncios e mídias disponíveis agora se encontram num .JSON à parte da lógica do programa.
+- **Melhoria da lógica de recomendação**: As recomendações do sistema agora sugerem títulos similares, e não só um gênero.
+- **Avaliação**: O usuário, antes de fazer uma avaliação, tem que ter assistido a mídia em questão.
+- ****: 
+
 ### 🧮 **Mudanças menores**
 - **Transições**:
 - **Cancelar ação**:
 - **Perfil Inexistente**:
 - **Streaming por perfil**:
-
-
-### ⚒️ **Mudanças significativas**
-- **Mudança de armazenamento**: Os anúncios e mídias disponíveis agora se encontram num .JSON à parte da lógica do programa.
-- **Melhoria da lógica de recomendação**: As recomendações do sistema agora sugerem títulos similares, e não só um gênero.
-- ****: 
-- ****: 
+- **Caixas de texto**: 
