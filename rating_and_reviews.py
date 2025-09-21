@@ -3,17 +3,23 @@
 # Content Rating and Reviews: Enabling users to rate and review content;
 from utility import limpar_tela
 import time
-from library_management import todas_as_midias, ConjuntoMidias
 
 class Avaliacoes:
     def __init__(self):
         self.avaliacoes = []
 
     def definir_avaliacao(self, nome_usuario, midia, nota, comentario):
+        if isinstance(midia, str):
+            id_conteudo = None 
+            titulo_conteudo = midia
+        else:
+            id_conteudo = midia.id_midia
+            titulo_conteudo = midia.titulo
+
         avaliacao = {
             "usuario": nome_usuario,
-            "id_conteudo": midia.id_midia,
-            "titulo_conteudo": midia.titulo,
+            "id_conteudo": id_conteudo,
+            "titulo_conteudo": titulo_conteudo,
             "nota": nota,
             "comentario": comentario
         }
@@ -56,7 +62,9 @@ class Avaliacoes:
             print("═" * 60)
 
     def mostrar_avaliacoes_por_id(self, id_conteudo):
-        avaliacoes_filtradas = [a for a in self.avaliacoes if a['id_conteudo'] == id_conteudo]
+        avaliacoes_filtradas = [
+            a for a in self.avaliacoes if a['id_conteudo'] == id_conteudo
+        ]
 
         if not avaliacoes_filtradas:
             print("Este conteúdo ainda não possui avaliações.")
@@ -74,6 +82,8 @@ class Avaliacoes:
         return self.avaliacoes
 
 def processo_para_avaliar(usuario, reviews):
+    from library_management import todas_as_midias, ConjuntoMidias
+
     while True:
         limpar_tela()
         print("O que deseja fazer?")
@@ -81,7 +91,7 @@ def processo_para_avaliar(usuario, reviews):
         print("1. Ver todas as avaliações")
         print("2. Fazer uma avaliação")
         print("3. Voltar ao menu principal")
-        print("╚" + "═" * 50 + "╝")
+        print("╚" * 50 + "╝")
         opcao = input("Digite a opção desejada: ")
 
         if opcao == "1":

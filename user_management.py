@@ -1,25 +1,19 @@
 # user_management.py
 
-# User Profile Management: Allowing users to create and manage multiple profiles;
-# User Subscription Management: Handling user subscriptions, including free trials and payment plans
-# Aqui será implementado a criação de contas de usuário e gerenciamento de perfis, com planos e etc.
-# Se relaciona com o controle parental também. Essa parte teria (exemplo):
-# Criar e deletar contas de usuário
-# Fazer login/logout
-# Gerenciar plano (gratuito/pago)
-# Adicionar e remover perfis (dentro da conta)
-# Ativar/desativar controle parental por perfil
-
-from recommendations import Recomendacoes
-from bookmarking_and_history import Historico, Marcar
-from bandwidth_optimization import BandaLarga
+# User Profile Management & User Subscription Management
 import time
-from utility import limpar_tela
-from multi_device import StreamingSession
 import re
+# from recommendations import Recomendacoes
+# from bookmarking_and_history import Historico, Marcar
+# from bandwidth_optimization import BandaLarga
+from utility import limpar_tela
+# from multi_device import StreamingSession
 
 class User:
     def __init__(self, nome, email, senha):
+        from bandwidth_optimization import BandaLarga
+        from multi_device import StreamingSession
+
         self._nome = None
         self._email = None  
         self.__senha = None
@@ -272,6 +266,9 @@ class User:
 
 class Perfil:
     def __init__(self, nome_perfil, controle_parental=False):
+        from recommendations import Recomendacoes
+        from bookmarking_and_history import Historico, Marcar
+
         self.nome_perfil = nome_perfil
         self.controle_parental = controle_parental
         self.recomendacoes = Recomendacoes()

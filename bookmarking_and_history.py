@@ -1,6 +1,5 @@
 # bookmarking_and_history.py
 
-from library_management import todas_as_midias, ConjuntoMidias
 from utility import limpar_tela
 import time
 
@@ -39,7 +38,7 @@ class Marcar:
         self.marcados = []
 
     def marcar_conteudo(self, midia):
-        if midia in self.marcados:   
+        if midia in self.marcados:  
             print("Este conteúdo já está marcado para assistir depois.")
             return
         
@@ -63,7 +62,9 @@ class Marcar:
             midia.exibir_informacoes()
 
 # Função auxiliar para o bookmarking (basicamente repete a logica da função Explorar conteúdo)
-def obter_catalogo_do_perfil(perfil) -> ConjuntoMidias:
+def obter_catalogo_do_perfil(perfil):
+    from library_management import todas_as_midias, ConjuntoMidias
+    
     if perfil.catalogo is None:
         cat = ConjuntoMidias()
         midias = todas_as_midias()  # cria as instâncias UMA vez para este perfil

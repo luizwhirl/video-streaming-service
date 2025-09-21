@@ -1,5 +1,6 @@
 [
   {
+    "id": 101,
     "tipo": "filme",
     "titulo": "O Resgate",
     "genero": "Ação",
@@ -7,6 +8,7 @@
     "tempo_duracao": 120
   },
   {
+    "id": 102,
     "tipo": "filme",
     "titulo": "Até o Último Homem",
     "genero": "Ação",
@@ -14,6 +16,7 @@
     "tempo_duracao": 140
   },
   {
+    "id": 103,
     "tipo": "serie",
     "titulo": "The Last of Us",
     "genero": "Ação",
@@ -23,6 +26,7 @@
     "temporadas": 1
   },
   {
+    "id": 104,
     "tipo": "filme",
     "titulo": "Vingadores: Ultimato",
     "genero": "Ação",
@@ -30,6 +34,7 @@
     "tempo_duracao": 181
   },
   {
+    "id": 105,
     "tipo": "serie",
     "titulo": "The Walking Dead",
     "genero": "Ação",
@@ -39,6 +44,7 @@
     "temporadas": 11
   },
   {
+    "id": 106,
     "tipo": "filme",
     "titulo": "O auto da Compadecida",
     "genero": "Comédia",
@@ -46,6 +52,7 @@
     "tempo_duracao": 100
   },
   {
+    "id": 107,
     "tipo": "serie",
     "titulo": "Brooklyn Nine-Nine",
     "genero": "Comédia",
@@ -55,6 +62,7 @@
     "temporadas": 8
   },
   {
+    "id": 108,
     "tipo": "serie",
     "titulo": "This Is Us",
     "genero": "Drama",
@@ -64,6 +72,7 @@
     "temporadas": 6
   },
   {
+    "id": 109,
     "tipo": "filme",
     "titulo": "Oppenheimer",
     "genero": "Drama",
@@ -71,6 +80,7 @@
     "tempo_duracao": 180
   },
   {
+    "id": 110,
     "tipo": "filme",
     "titulo": "A Culpa é das Estrelas",
     "genero": "Romance",
@@ -78,6 +88,7 @@
     "tempo_duracao": 126
   },
   {
+    "id": 111,
     "tipo": "filme",
     "titulo": "O Telefone Preto",
     "genero": "Terror",
@@ -85,6 +96,7 @@
     "tempo_duracao": 115
   },
   {
+    "id": 112,
     "tipo": "documentario",
     "titulo": "O Dilema das Redes",
     "genero": "Documentário",
@@ -92,6 +104,7 @@
     "tempo_duracao": 94
   },
   {
+    "id": 113,
     "tipo": "anime",
     "titulo": "Attack on Titan",
     "genero": "Animação",
@@ -101,6 +114,7 @@
     "temporadas": 4
   },
   {
+    "id": 114,
     "tipo": "anime",
     "titulo": "Naruto Shippuden",
     "genero": "Animação",
@@ -110,6 +124,7 @@
     "temporadas": 20
   },
   {
+    "id": 115,
     "tipo": "serie",
     "titulo": "Guerra dos Tronos",
     "genero": "Ação",
@@ -119,6 +134,7 @@
     "temporadas": 8
   },
   {
+    "id": 116,
     "tipo": "filme",
     "titulo": "Harry Potter e a Pedra Filosofal",
     "genero": "Fantasia",
@@ -126,6 +142,7 @@
     "tempo_duracao": 152
   },
   {
+    "id": 117,
     "tipo": "serie",
     "titulo": "Pokémon",
     "genero": "Aventura",
@@ -135,6 +152,7 @@
     "temporadas": 25
   },
   {
+    "id": 118,
     "tipo": "filme",
     "titulo": "Gladiador",
     "genero": "Ação",
@@ -142,6 +160,7 @@
     "tempo_duracao": 155
   },
   {
+    "id": 119,
     "tipo": "filme",
     "titulo": "Matrix",
     "genero": "Ação",
@@ -149,6 +168,7 @@
     "tempo_duracao": 136
   },
   {
+    "id": 120,
     "tipo": "filme",
     "titulo": "John Wick - De Volta ao Jogo",
     "genero": "Ação",
@@ -156,6 +176,7 @@
     "tempo_duracao": 101
   },
   {
+    "id": 121,
     "tipo": "filme",
     "titulo": "O Cavaleiro das Trevas",
     "genero": "Ação",
@@ -163,6 +184,7 @@
     "tempo_duracao": 152
   },
   {
+    "id": 122,
     "tipo": "filme",
     "titulo": "Resgate",
     "genero": "Ação",
@@ -170,6 +192,7 @@
     "tempo_duracao": 116
   },
   {
+    "id": 123,
     "tipo": "filme",
     "titulo": "Django Livre",
     "genero": "Ação",
@@ -177,6 +200,7 @@
     "tempo_duracao": 165
   },
   {
+    "id": 124,
     "tipo": "filme",
     "titulo": "Uma Sexta-Feira Muito Louca",
     "genero": "Comédia",
@@ -184,6 +208,7 @@
     "tempo_duracao": 97
   },
   {
+    "id": 125,
     "tipo": "filme",
     "titulo": "Deadpool & Wolverine",
     "genero": "Ação",
@@ -191,6 +216,7 @@
     "tempo_duracao": 120
   },
   {
+    "id": 126,
     "tipo": "filme",
     "titulo": "Barbie",
     "genero": "Comédia",
@@ -198,6 +224,7 @@
     "tempo_duracao": 114
   },
   {
+    "id": 127,
     "tipo": "filme",
     "titulo": "Super Mario Bros. O Filme",
     "genero": "Animação",
@@ -205,6 +232,7 @@
     "tempo_duracao": 92
   },
   {
+    "id": 128,
     "tipo": "filme",
     "titulo": "Divertida Mente 2",
     "genero": "Animação",
@@ -212,6 +240,7 @@
     "tempo_duracao": 96
   },
   {
+    "id": 129,
     "tipo": "filme",
     "titulo": "O Terminal",
     "genero": "Drama",
@@ -219,6 +248,7 @@
     "tempo_duracao": 128
   },
   {
+    "id": 130,
     "tipo": "filme",
     "titulo": "À Procura da Felicidade",
     "genero": "Drama",
@@ -226,6 +256,7 @@
     "tempo_duracao": 117
   },
   {
+    "id": 131,
     "tipo": "filme",
     "titulo": "Um Sonho de Liberdade",
     "genero": "Drama",
@@ -233,6 +264,7 @@
     "tempo_duracao": 142
   },
   {
+    "id": 132,
     "tipo": "filme",
     "titulo": "A Espera de um Milagre",
     "genero": "Drama",
@@ -240,6 +272,7 @@
     "tempo_duracao": 189
   },
   {
+    "id": 133,
     "tipo": "filme",
     "titulo": "Forrest Gump: O Contador de Histórias",
     "genero": "Drama",
@@ -247,6 +280,7 @@
     "tempo_duracao": 142
   },
   {
+    "id": 134,
     "tipo": "filme",
     "titulo": "Como Eu Era Antes de Você",
     "genero": "Romance",
@@ -254,6 +288,7 @@
     "tempo_duracao": 110
   },
   {
+    "id": 135,
     "tipo": "filme",
     "titulo": "Diário de uma Paixão",
     "genero": "Romance",
@@ -261,6 +296,7 @@
     "tempo_duracao": 123
   },
   {
+    "id": 136,
     "tipo": "filme",
     "titulo": "Psicose",
     "genero": "Terror",
@@ -268,6 +304,7 @@
     "tempo_duracao": 109
   },
   {
+    "id": 137,
     "tipo": "filme",
     "titulo": "O Exorcista",
     "genero": "Terror",
@@ -275,6 +312,7 @@
     "tempo_duracao": 121
   },
   {
+    "id": 138,
     "tipo": "filme",
     "titulo": "Invocação do Mal",
     "genero": "Terror",
@@ -282,6 +320,7 @@
     "tempo_duracao": 112
   },
   {
+    "id": 139,
     "tipo": "filme",
     "titulo": "Hereditário",
     "genero": "Terror",
@@ -289,6 +328,7 @@
     "tempo_duracao": 127
   },
   {
+    "id": 140,
     "tipo": "documentario",
     "titulo": "Senna",
     "genero": "Documentário",
@@ -296,6 +336,7 @@
     "tempo_duracao": 106
   },
   {
+    "id": 141,
     "tipo": "documentario",
     "titulo": "O Sal da Terra",
     "genero": "Documentário",
@@ -303,6 +344,7 @@
     "tempo_duracao": 110
   },
   {
+    "id": 142,
     "tipo": "documentario",
     "titulo": "Cabra Marcado para Morrer",
     "genero": "Documentário",
@@ -310,6 +352,7 @@
     "tempo_duracao": 119
   },
   {
+    "id": 143,
     "tipo": "documentario",
     "titulo": "Amy",
     "genero": "Documentário",
@@ -317,6 +360,7 @@
     "tempo_duracao": 128
   },
   {
+    "id": 144,
     "tipo": "anime",
     "titulo": "One Piece",
     "genero": "Animação",
@@ -326,6 +370,7 @@
     "temporadas": 20
   },
   {
+    "id": 145,
     "tipo": "anime",
     "titulo": "Death Note",
     "genero": "Animação",
@@ -335,6 +380,7 @@
     "temporadas": 1
   },
   {
+    "id": 146,
     "tipo": "anime",
     "titulo": "Demon Slayer",
     "genero": "Animação",
@@ -344,6 +390,7 @@
     "temporadas": 4
   },
   {
+    "id": 147,
     "tipo": "anime",
     "titulo": "Jujutsu Kaisen",
     "genero": "Animação",
@@ -353,6 +400,7 @@
     "temporadas": 2
   },
   {
+    "id": 148,
     "tipo": "anime",
     "titulo": "One-Punch Man",
     "genero": "Animação",
@@ -362,6 +410,7 @@
     "temporadas": 2
   },
   {
+    "id": 149,
     "tipo": "serie",
     "titulo": "Breaking Bad",
     "genero": "Drama",
@@ -371,6 +420,7 @@
     "temporadas": 5
   },
   {
+    "id": 150,
     "tipo": "serie",
     "titulo": "Stranger Things",
     "genero": "Aventura",
@@ -380,6 +430,7 @@
     "temporadas": 4
   },
   {
+    "id": 151,
     "tipo": "serie",
     "titulo": "The Boys",
     "genero": "Ação",
@@ -389,6 +440,7 @@
     "temporadas": 4
   },
   {
+    "id": 152,
     "tipo": "serie",
     "titulo": "Peacemaker",
     "genero": "Ação",
@@ -398,6 +450,7 @@
     "temporadas": 1
   },
   {
+    "id": 153,
     "tipo": "serie",
     "titulo": "Chernobyl",
     "genero": "Drama",
@@ -407,6 +460,7 @@
     "temporadas": 1
   },
   {
+    "id": 154,
     "tipo": "serie",
     "titulo": "The Crown",
     "genero": "Drama",
@@ -416,6 +470,7 @@
     "temporadas": 6
   },
   {
+    "id": 155,
     "tipo": "serie",
     "titulo": "Friends",
     "genero": "Comédia",
@@ -425,6 +480,7 @@
     "temporadas": 10
   },
   {
+    "id": 156,
     "tipo": "serie",
     "titulo": "The Big Bang Theory",
     "genero": "Comédia",
@@ -434,6 +490,7 @@
     "temporadas": 12
   },
   {
+    "id": 157,
     "tipo": "serie",
     "titulo": "How I Met Your Mother",
     "genero": "Comédia",
@@ -443,6 +500,7 @@
     "temporadas": 9
   },
   {
+    "id": 158,
     "tipo": "serie",
     "titulo": "Modern Family",
     "genero": "Comédia",

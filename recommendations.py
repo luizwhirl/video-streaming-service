@@ -3,7 +3,6 @@
 # Personalized Recommendations: Offering personalized content recommendations based on user preferences
 from collections import Counter
 import random
-from library_management import obter_catalogo_do_perfil 
 
 class Recomendacoes:
     def __init__(self):
@@ -13,6 +12,8 @@ class Recomendacoes:
         self.generos_assistidos.append(genero)
 
     def recomendar_conteudo(self, usuario, perfil):
+        from library_management import obter_catalogo_do_perfil
+        
         NUM_RECOMENDACOES = 5
 
         if not usuario.plano.recomendacoes_personalizadas:
