@@ -43,6 +43,13 @@ python main.py
 - **Histórico por perfil**: Em alguns casos, o sistema não sabia diferenciar qual perfil havia assistido determinado conteúdo; e então dava o mesmo histório para todos os perfis. 
 - **Caixas de texto**: Apenas uma correção visual. O programa agora imprime as caixas de informação de modo mais arrumado.
 
+--- 
+
+## 🧱 **Padrões criacionais**
+<!-- - ****: 
+- ****: 
+- ****: 
+- ****:  -->
 ---
 
 ## 🏗️ **Estrutura de Projeto**
