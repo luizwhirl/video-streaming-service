@@ -4,9 +4,23 @@
 from utility import limpar_tela
 import time
 
+# SINGLETON
+# essa classe agora garante que apenas uma instância dela exista em todo o sistema
+# isso centraliza o gerenciamento de todas as avaliações
 class Avaliacoes:
+    _instance = None
+    _initialized = False
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(Avaliacoes, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self):
+        if self._initialized:
+            return
         self.avaliacoes = []
+        self._initialized = True
 
     def definir_avaliacao(self, nome_usuario, midia, nota, comentario):
         if isinstance(midia, str):
@@ -15,6 +29,13 @@ class Avaliacoes:
         else:
             id_conteudo = midia.id_midia
             titulo_conteudo = midia.titulo
+
+        # verificamos se o usuário já avaliou este conteúdo
+        for avaliacao in self.avaliacoes:
+            if avaliacao['usuario'] == nome_usuario and avaliacao['id_conteudo'] == id_conteudo:
+                print(f"{nome_usuario} já avaliou '{titulo_conteudo}'. A avaliação não será duplicada.")
+                time.sleep(2)
+                return
 
         avaliacao = {
             "usuario": nome_usuario,
@@ -38,7 +59,7 @@ class Avaliacoes:
                 print("Entrada inválida. Por favor, digite um número.")
 
         comentario = input("Digite seu comentário sobre o conteúdo: ")
-        self.definir_avaliacao(usuario.nome, midia_selecionada, nota, comentario)
+        self.definir_avaliacao(usuario.nome, midia_selecionada, self.formatar_nota_estrelas(nota), comentario)
         print("Avaliação postada com sucesso!")
         time.sleep(1.5)
 
@@ -53,11 +74,10 @@ class Avaliacoes:
             return
 
         for avaliacao in self.avaliacoes:
-            nota_estrelas = self.formatar_nota_estrelas(avaliacao["nota"])
             print("═" * 60)
             print(f"@ {avaliacao['usuario']}")
             print(f"Conteúdo: {avaliacao['titulo_conteudo']}")
-            print(f"Nota: {nota_estrelas}")
+            print(f"Nota: {avaliacao['nota']}")
             print(f"Comentário: {avaliacao['comentario']}")
             print("═" * 60)
 
@@ -71,10 +91,9 @@ class Avaliacoes:
             return
 
         for avaliacao in avaliacoes_filtradas:
-            nota_estrelas = self.formatar_nota_estrelas(avaliacao["nota"])
             print("═" * 60)
             print(f"@ {avaliacao['usuario']}")
-            print(f"Nota: {nota_estrelas}")
+            print(f"Nota: {avaliacao['nota']}")
             print(f"Comentário: {avaliacao['comentario']}")
             print("═" * 60)
 
@@ -91,7 +110,7 @@ def processo_para_avaliar(usuario, reviews):
         print("1. Ver todas as avaliações")
         print("2. Fazer uma avaliação")
         print("3. Voltar ao menu principal")
-        print("╚" + "═" * 50 + "╝") 
+        print("╚" + "═" * 50 + "╝")
         opcao = input("Digite a opção desejada: ")
 
         if opcao == "1":
