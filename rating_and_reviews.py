@@ -91,7 +91,7 @@ def processo_para_avaliar(usuario, reviews):
         print("1. Ver todas as avaliações")
         print("2. Fazer uma avaliação")
         print("3. Voltar ao menu principal")
-        print("╚" * 50 + "╝")
+        print("╚" + "═" * 50 + "╝") 
         opcao = input("Digite a opção desejada: ")
 
         if opcao == "1":
@@ -104,6 +104,21 @@ def processo_para_avaliar(usuario, reviews):
             if usuario.plano.nome == "Gratuito":
                 print("Usuários no plano gratuito não podem postar avaliações.")
                 time.sleep(2)
+                continue
+
+            print("Selecione o perfil para fazer a avaliação:")
+            if not usuario.listar_perfis():
+                time.sleep(1.5)
+                continue
+            
+            nome_perfil = input("Digite o nome do perfil (ou pressione Enter para voltar): ")
+            if not nome_perfil:
+                continue
+
+            perfil = usuario.obter_perfil_por_nome(nome_perfil)
+            if not perfil:
+                print(f"Perfil '{nome_perfil}' não encontrado.")
+                time.sleep(1.5)
                 continue
             
             catalogo = ConjuntoMidias()
@@ -130,6 +145,13 @@ def processo_para_avaliar(usuario, reviews):
             indice = int(escolha_conteudo) - 1
             if 0 <= indice < len(resultados):
                 conteudo_escolhido = resultados[indice]
+
+                if conteudo_escolhido not in perfil.historico.historico:
+                    print("\nVocê só pode avaliar conteúdos que já assistiu.")
+                    print("Por favor, assista ao conteúdo antes de deixar uma avaliação.")
+                    time.sleep(3)
+                    continue
+
                 limpar_tela()
                 print(f"Avaliando: {conteudo_escolhido.titulo}")
                 reviews.postar_avaliacao(usuario, conteudo_escolhido)
