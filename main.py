@@ -1,7 +1,7 @@
 # main.py
 
 import time
-from user_management import User
+from user_management import User, UserBuilder 
 from parental_control import select_profile_for_parental_control, select_profile_for_not_parental_control, restringir_conteudo
 from utility import limpar_tela
 from library_management import Explorar_Conteudo, Explorar_Conteudo_Convidado
@@ -32,6 +32,7 @@ def criar_conta():
             for usuario in usuarios_registrados:
                 if usuario.nome == nome:
                     print("Usuário já existe. Tente novamente.")
+                    time.sleep(1.5)
                     continue
             
             print("Digite seu email:")
@@ -40,6 +41,7 @@ def criar_conta():
             for usuario in usuarios_registrados:
                 if usuario.email == email:
                     print("Esse email já foi registrado. Tente novamente.")
+                    time.sleep(1.5)
                     continue
                     
             print("Digite sua senha:")
@@ -49,11 +51,16 @@ def criar_conta():
 
             if senha != senha2:
                 print("As senhas não coincidem. Tente novamente.")
+                time.sleep(1.5)
                 continue
 
-            novo_usuario = User(nome, email, senha)
+            # usando agora o novo padrão builder
+            builder = UserBuilder()
+            novo_usuario = builder.com_nome(nome).com_email(email).com_senha(senha).build()
+            
             usuarios_registrados.append(novo_usuario)
             print("Sua conta foi criada com sucesso!")
+            time.sleep(1.5)
             break
             
         except ValueError as e:
@@ -113,7 +120,6 @@ def menu_inicial():
         if opcao == "1":
             limpar_tela()
             criar_conta()
-            time.sleep(1.5)
         
         elif opcao == "2":
             limpar_tela()
@@ -339,6 +345,7 @@ def menu_principal(usuario):
                         time.sleep(1.5)
                 
                 elif opcao_historico == "2":
+                    limpar_tela()
                     print("Selecione o perfil para acessar o histórico:\n")
                     usuario.listar_perfis()
                     nome_perfil = input("Digite o nome do perfil (ou pressione Enter para voltar): ")

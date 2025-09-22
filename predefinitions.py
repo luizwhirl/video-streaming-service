@@ -1,23 +1,25 @@
-#predefinitions.py
+# predefinitions.py
 
-from user_management import User, Perfil
+from user_management import User, Perfil, UserBuilder 
 from rating_and_reviews import Avaliacoes
 
+# criando usuários com o userbuilder
+usuario1 = UserBuilder().com_nome("João").com_email("joao@example.com").com_senha("senha123").build()
+usuario2 = UserBuilder().com_nome("Maria").com_email("maria@example.com").com_senha("senha456").build()
+usuario3 = UserBuilder().com_nome("José").com_email("jose@example.com").com_senha("senha789").build()
+usuario4 = UserBuilder().com_nome("Teste").com_email("teste@example.com").com_senha("123456").build()
+usuario5 = UserBuilder().com_nome("Otávio").com_email("otaviomenezes574@gmail.com").com_senha("senha1234").build()
 
-# Preencher com coisas predefinidas
-usuarios_predefinidos = []
-
-usuario1 = User("João", "joao@example.com", "senha123")
-usuario2 = User("Maria", "maria@example.com", "senha456")
-usuario3 = User("José", "jose@example.com", "senha789")
-usuario4 = User("Teste", "teste@example.com", "123456")
-usuario5 = User("Otávio", "otaviomenezes574@gmail.com", "senha1234")
-
+# adicianado perfis a esses usuários
 usuario4.adicionar_perfil("Adulto", controle_parental=False)
 usuario4.adicionar_perfil("Criança", controle_parental=True)
 usuario5.adicionar_perfil("Otávio", controle_parental=False)
 
-avaliacoes_predefinidas = Avaliacoes() # Avaliações já predefinidas que podem ser usadas para adicionar mais
+# usando a instancia singleton para as Avaliacoes
+# chamando ela aqui, garantimos que só existe uma instância dela
+avaliacoes_predefinidas = Avaliacoes() 
+
+# adicionando avaliações a essa instância única
 avaliacoes_predefinidas.definir_avaliacao(usuario1.nome, "O Telefone Preto","★★★★★", "Excelente filme!")
 avaliacoes_predefinidas.definir_avaliacao(usuario2.nome, "O Poderoso Chefão", "★★★★☆", "Muito bom, mas poderia ser melhor.")
 avaliacoes_predefinidas.definir_avaliacao(usuario3.nome, "A Origem", "★★★☆☆", "Ok, nada especial.")

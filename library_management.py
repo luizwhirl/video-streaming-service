@@ -11,9 +11,6 @@ from ads_management import realizar_exibicao_anuncio, redefinir_limite_diario
 from rating_and_reviews import Avaliacoes 
 import json 
 
-from predefinitions import retornar_avaliacoes_predefinidas
-reviews_globais = retornar_avaliacoes_predefinidas()
-
 class ConjuntoMidias:
     # referente a varias midias
     def __init__(self):
@@ -72,6 +69,7 @@ class Midia(ABC):
 
     # a função agora recebe o perfil para registrar o último conteúdo assistido
     def assistir(self, usuario, perfil):
+        reviews_globais = Avaliacoes()
         usuario.conteudos_vistos += 1
         if usuario.plano.limite_diario < usuario.conteudos_vistos:
             print("Limite diário de visualizações atingido. Assista um anúncio para redefinir esse limite.")
@@ -92,12 +90,10 @@ class Midia(ABC):
             titulo = self.titulo.strip()
             titulo_centralizado = titulo.center(24)
 
-            # marcação de estado
             self.assistido = True
             self.ultima_exibicao = datetime.datetime.now()
-            perfil.ultimo_conteudo_assistido = self.titulo  # registra o último conteúdo assistido no perfil
+            perfil.ultimo_conteudo_assistido = self.titulo
 
-            # avaliação de banda antes de começar
             usuario.otimizacao_banda_larga.ajustar_qualidade(usuario)
             usuario.otimizacao_banda_larga.exibir_configuracoes_qualidade()
         
@@ -109,7 +105,7 @@ class Midia(ABC):
             print(f"█░▒░▒░▒█▀█ {titulo_centralizado} ")
             print("█▄▄▄▄▄▄███═════════════════════")
             print()
-            # a cada alguns segundos, tentar exibir um anuncio
+            
             if usuario.plano.nome != "Premium":
                 anuncio = realizar_exibicao_anuncio(usuario)
                 if anuncio is True:
@@ -239,7 +235,6 @@ class Novela(Midia):
         print("╚" + "═" * 50 + "╝")
 
 class Anime(Midia):
-    # agora aqui a gente adiciona o id_midia
     def __init__(self, id_midia, titulo, genero, classificacao, tempo_duracao, episodios, temporadas):
         super().__init__(id_midia, titulo, genero, classificacao, tempo_duracao)
         self.episodios = episodios
@@ -259,7 +254,29 @@ class Anime(Midia):
         print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
         print("╚" + "═" * 50 + "╝")
 
-# função atualizada para ler o id do JSON
+# FACTORY 
+# essa classe centraliza a lógica de criação de objetos de mídia
+# o que remove a necessidade de condicionais if/elif no código cliente
+# e facilita a adição de novos tipos de mídia no futuro
+class MidiaFactory:
+    @staticmethod
+    def criar_midia(item_data):
+        tipo = item_data.get("tipo")
+        if tipo == "filme":
+            return Filme(item_data["id"], item_data["titulo"], item_data["genero"], item_data["classificacao"], item_data["tempo_duracao"])
+        elif tipo == "serie":
+            return Serie(item_data["id"], item_data["titulo"], item_data["genero"], item_data["classificacao"], item_data["tempo_duracao"], item_data["episodios"], item_data["temporadas"])
+        elif tipo == "documentario":
+            return Documentario(item_data["id"], item_data["titulo"], item_data["genero"], item_data["classificacao"], item_data["tempo_duracao"])
+        elif tipo == "novela":
+            return Novela(item_data["id"], item_data["titulo"], item_data["genero"], item_data["classificacao"], item_data["tempo_duracao"])
+        elif tipo == "anime":
+            return Anime(item_data["id"], item_data["titulo"], item_data["genero"], item_data["classificacao"], item_data["tempo_duracao"], item_data["episodios"], item_data["temporadas"])
+        else:
+            # lança um erro se o tipo for desconhecido, para evitar falhas silenciosas
+            raise ValueError(f"Tipo de mídia desconhecido: {tipo}")
+
+
 def todas_as_midias():
     midias = []
     try:
@@ -267,18 +284,11 @@ def todas_as_midias():
             dados_midias = json.load(f)
 
         for item in dados_midias:
-            tipo = item.get("tipo")
-            # passa o ID para o construtor da classe
-            if tipo == "filme":
-                midias.append(Filme(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
-            elif tipo == "serie":
-                midias.append(Serie(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"], item["episodios"], item["temporadas"]))
-            elif tipo == "documentario":
-                midias.append(Documentario(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
-            elif tipo == "novela":
-                 midias.append(Novela(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"]))
-            elif tipo == "anime":
-                midias.append(Anime(item["id"], item["titulo"], item["genero"], item["classificacao"], item["tempo_duracao"], item["episodios"], item["temporadas"]))
+            try:
+                midia_obj = MidiaFactory.criar_midia(item)
+                midias.append(midia_obj)
+            except (ValueError, KeyError) as e:
+                print(f"Erro ao processar item de mídia: {item.get('titulo', 'sem título')}. Detalhes: {e}")
         
         return midias
 
@@ -287,9 +297,6 @@ def todas_as_midias():
         return []
     except json.JSONDecodeError:
         print("Erro: O arquivo 'midias.json' possui um formato inválido.")
-        return []
-    except KeyError as e:
-        print(f"Erro: A chave {e} está faltando em um dos itens no arquivo 'midias.json'.")
         return []
 
 def obter_catalogo_do_perfil(perfil) -> ConjuntoMidias:
@@ -392,7 +399,6 @@ def Explorar_Conteudo(usuario):
                     print("Opção inválida.")
             else:
                 print("Entrada inválida.")
-
 
         elif escolha == "5":
             print("Saindo da biblioteca...")

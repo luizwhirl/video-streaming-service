@@ -3,11 +3,36 @@
 # User Profile Management & User Subscription Management
 import time
 import re
-# from recommendations import Recomendacoes
-# from bookmarking_and_history import Historico, Marcar
-# from bandwidth_optimization import BandaLarga
 from utility import limpar_tela
-# from multi_device import StreamingSession
+
+# BUILDER
+# essa classe userbuilder permite construir um objeto User passo a passo
+# o que separa a lógica de construção do objeto da representação final,
+# tornando o código mais legível e fácil de manter, especialmente se o objeto User
+# se casso o User ficasse mais elaborado se fosse pra ser mais atualizado no futuro
+class UserBuilder:
+    def __init__(self):
+        self._nome = None
+        self._email = None
+        self.__senha = None
+
+    def com_nome(self, nome):
+        self._nome = nome
+        return self
+
+    def com_email(self, email):
+        self._email = email
+        return self
+
+    def com_senha(self, senha):
+        self.__senha = senha
+        return self
+
+    def build(self):
+        if not all([self._nome, self._email, self.__senha]):
+            raise ValueError("Nome, email e senha são obrigatórios para criar um usuário.")
+        
+        return User(self._nome, self._email, self.__senha)
 
 class User:
     def __init__(self, nome, email, senha):
@@ -23,7 +48,6 @@ class User:
         self._otimizacao_banda_larga = BandaLarga()
         self._conteudos_vistos = 0
         
-        # Usa os setters para validação
         self.nome = nome
         self.email = email
         self.senha = senha
@@ -264,6 +288,7 @@ class User:
         else:
             print("Perfil não encontrado.")
 
+
 class Perfil:
     def __init__(self, nome_perfil, controle_parental=False):
         from recommendations import Recomendacoes
@@ -281,6 +306,7 @@ class Perfil:
     def __str__(self):
         return f"Perfil: {self.nome_perfil}, Controle Parental: {'Ativado' if self.controle_parental else 'Desativado'}"
     
+
 class Plano:
     def __init__(self, nome, preco):
         self.nome = nome
@@ -328,7 +354,6 @@ class Plano:
             "1 tela por vez",
             "Não pode Avaliar conteúdo"
         ]
-
 
     def plano_basico(self):
         self.nome = "Básico"
