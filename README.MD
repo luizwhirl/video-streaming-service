@@ -46,10 +46,10 @@ python main.py
 --- 
 
 ## 🧱 **Padrões criacionais**
-<!-- - ****: 
-- ****: 
-- ****: 
-- ****:  -->
+- **Singleton**: Implemententaod 
+- **Factory Method**: Whatizapi 
+- **Builder**:  bicho
+<!-- - ****: -->
 ---
 
 ## 🏗️ **Estrutura de Projeto**
