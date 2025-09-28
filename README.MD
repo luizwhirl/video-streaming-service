@@ -46,10 +46,11 @@ python main.py
 --- 
 
 ## 🧱 **Padrões criacionais**
-- **Singleton**: Implemententaod 
-- **Factory Method**: Whatizapi 
-- **Builder**:  bicho
+- **Singleton**: Aplicado em ```Avaliacoes```, esse padrão garante que exista somente uma única instância dessa classe em toda a aplicação, o que funciona como um ponto de acesso global para as avaliações de conteúdo. Desse modo, qualquer parte do sistema que precisa registrar ou consultar uma avaliação vai estar interagindo com o mesmo e único repositório de dados, garantindo a consistência e integridade das informações das reviews. 
+- **Factory Method**: Aqui, esse padrão foi usado na classe ```MidiaFactory``` para centralizar a criação de tipos diferentes de midias. Em vez do código do cliente decidir qual classe instanciar, ele vai somente enviar os dados para a "fábrica", que analisa o "tipo" de mídia e retorna o objeto certo. Essa prática desacopla o sistema, o que facilita a adição de novos tipos de conteúdos no futuro, já que as mudanças ficam concentradas somente na fábrica. 
+- **Builder**:  Foi implementado na classe ```UserBuilder``` e serve para simplificar a criação de objetos ```User``` complexos. Ele permite construir o objeto passo a passo atráves de métodos encadeados, como ```com_nome()``` e ```com_email()```, sendo finalizada com o método ```build()```. Aqui nós separamos a lógica de construção do objeto final, o que torna a criação de novos usuários mais legível e mais organizada, especialmente quando é para se lidar com múltiplos atributos e regras de validação.
 <!-- - ****: -->
+
 ---
 
 ## 🏗️ **Estrutura de Projeto**
