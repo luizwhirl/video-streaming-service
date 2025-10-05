@@ -3,12 +3,19 @@
 # Bandwidth Optimization: Adapting streaming quality based on user bandwidth
 # Nesse caso, estou simulando uma rede instável visto que para fazer isso diretamente teria que importar outras bibliotecas não nativas do python, como o speedtest
 import random
+from observer import Observer, Subject
 
-class BandaLarga:
+class BandaLarga(Observer):
     def __init__(self):
         self.velocidade_mbps = None
         self.qualidade_video = "720p" # Qualidade padrão
         self.auto_ajuste = True # Configurado para ajuste automático
+
+    def update(self, usuario: Subject) -> None:
+        """
+        Recebe notificação quando o plano do usuário muda e ajusta as capacidades.
+        """
+        print(f"\n[Notificação de Banda Larga]: O plano do usuário {usuario.nome} foi atualizado para '{usuario.plano.nome}'. As configurações de qualidade foram reavaliadas.")
 
     def detectar_velocidade(self):
         return round(random.uniform(0.5, 300), 2) # Retorna um valor aleatório de velocidade de internet

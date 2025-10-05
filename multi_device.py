@@ -5,6 +5,7 @@
 from utility import limpar_tela
 import time
 import random
+from observer import Observer, Subject
 
 class Device:
     def __init__(self, nome, tipo, identificador):
@@ -26,10 +27,21 @@ class Device:
         else:
             print("Status: Disponível")
 
-class StreamingSession:
+class StreamingSession(Observer):
     def __init__(self, usuario):
         self.usuario = usuario
         self.dispositivos = [] 
+
+    def update(self, usuario: Subject) -> None:
+        """
+        Recebe notificação quando o plano do usuário muda para reavaliar o limite de telas.
+        """
+        novo_limite = usuario.plano.maximo_telas_simultaneas
+        print(f"\n[Notificação de Streaming]: O plano de {usuario.nome} foi atualizado. Novo limite de telas simultâneas: {novo_limite}.")
+        sessoes_ativas = self.get_sessoes_ativas()
+        if sessoes_ativas > novo_limite:
+            print(f"AVISO: Você está excedendo o novo limite de telas. Ativas: {sessoes_ativas}, Limite: {novo_limite}.")
+
 
     # vamos contar quantas telas estão ativas
     def get_sessoes_ativas(self):

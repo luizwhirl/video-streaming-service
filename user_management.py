@@ -4,6 +4,7 @@
 import time
 import re
 from utility import limpar_tela
+from observer import Subject, Observer
 
 # BUILDER
 # essa classe userbuilder permite construir um objeto User passo a passo
@@ -34,8 +35,9 @@ class UserBuilder:
         
         return User(self._nome, self._email, self.__senha)
 
-class User:
+class User(Subject):
     def __init__(self, nome, email, senha):
+        super().__init__() # Inicializa o Subject do padrão Observer
         from bandwidth_optimization import BandaLarga
         from multi_device import StreamingSession
 
@@ -43,11 +45,15 @@ class User:
         self._email = None  
         self.__senha = None
         self._perfis = []
-        self._plano = Plano("Gratuito", "R$ 0,00")
+        self._plano = Plano("Gratuito", "R$ 0,00", self)
         self._multiplo_streaming = StreamingSession(self)
         self._otimizacao_banda_larga = BandaLarga()
         self._conteudos_vistos = 0
         
+        # Anexa os observadores
+        self.attach(self._multiplo_streaming)
+        self.attach(self._otimizacao_banda_larga)
+
         self.nome = nome
         self.email = email
         self.senha = senha
@@ -230,8 +236,6 @@ class User:
                         if len(self.perfis) > 5:
                             self._perfis = self._perfis[:5]
                         print("Plano cancelado. Voltando ao plano Gratuito.")
-                    else:
-                        continue
                 elif escolha == "3":
                     print("Voltando ao Menu Principal...")
                     break
@@ -308,9 +312,10 @@ class Perfil:
     
 
 class Plano:
-    def __init__(self, nome, preco):
+    def __init__(self, nome, preco, usuario):
         self.nome = nome
         self.preco = preco
+        self.usuario = usuario # Referência ao usuário para notificar mudanças
         self.beneficios = []
         self.anuncios = True  
         self.limite_diario = 10
@@ -439,7 +444,7 @@ class Plano:
         print("Se caso você tiver mais de 5 perfis, eles serão reduzidos para 5.")
         resposta = input("Digite 'sim' para confirmar ou 'não' para cancelar: ")
         if resposta.lower() == "sim":
-            self.plano_gratuito()
+            self.trocar_plano("Gratuito")
             time.sleep(1.5)
             print("Plano cancelado com sucesso.")
             return True
@@ -455,3 +460,6 @@ class Plano:
             self.plano_basico()
         elif nome == "Premium":
             self.plano_premium()
+        
+        # Notifica os observadores sobre a mudança de estado
+        self.usuario.notify()

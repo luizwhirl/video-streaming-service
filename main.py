@@ -8,6 +8,7 @@ from library_management import Explorar_Conteudo, Explorar_Conteudo_Convidado
 from bookmarking_and_history import ver_historico_de_exibicao, limpar_historico, bookmarking
 from rating_and_reviews import Avaliacoes, processo_para_avaliar
 from predefinitions import retornar_usuarios_predefinidos, retornar_avaliacoes_predefinidas
+from recommendation_strategies import GenreBasedStrategy, TrendingStrategy, SurpriseMeStrategy
 
 
 # Video Streaming Service - Main Module
@@ -18,7 +19,7 @@ reviews = retornar_avaliacoes_predefinidas()
 def inicializar():
     limpar_tela()
     print("╔" + "═" * 20 + "╗")
-    print("║  VSTREAMING HUB    ║")
+    print("║   VSTREAMING HUB   ║")
     print("╚" + "═" * 20 + "╝")
 
 def criar_conta():
@@ -295,7 +296,7 @@ def menu_principal(usuario):
 
         elif opcao == "3":
             limpar_tela()
-            print("Selecione o perfil para visualizar recomendações personalizadas:\n")
+            print("Selecione o perfil para as recomendações:\n")
             booleano = usuario.listar_perfis()  
             if not booleano:
                 time.sleep(1.5)
@@ -306,13 +307,46 @@ def menu_principal(usuario):
                 continue
                 
             perfil = usuario.obter_perfil_por_nome(nome_perfil)
-
-            if perfil:
-                perfil.recomendacoes.recomendar_conteudo(usuario, perfil)
-                input("\nPressione Enter para continuar...")
-            else:
+            if not perfil:
                 print(f"Perfil '{nome_perfil}' não encontrado.")
                 time.sleep(1.5)
+                continue
+            
+            # Submenu para escolher a estratégia
+            while True:
+                limpar_tela()
+                print("Menu de Recomendações\n")
+                print("1. Ver Recomendações")
+                print("2. Mudar Estratégia de Recomendação")
+                print("3. Voltar")
+                escolha_rec = input("Escolha uma opção: ")
+
+                if escolha_rec == "1":
+                    limpar_tela()
+                    perfil.recomendacoes.recomendar_conteudo(usuario, perfil)
+                    input("\nPressione Enter para continuar...")
+                elif escolha_rec == "2":
+                    limpar_tela()
+                    print("Escolha a nova estratégia de recomendação:\n")
+                    print("1. Baseada em Gêneros (Padrão)")
+                    print("2. Em Alta (Trending)")
+                    print("3. Surpreenda-me (Aleatória)")
+                    escolha_strat = input("Escolha uma opção: ")
+                    if escolha_strat == "1":
+                        perfil.recomendacoes.set_strategy(GenreBasedStrategy())
+                    elif escolha_strat == "2":
+                        perfil.recomendacoes.set_strategy(TrendingStrategy())
+                    elif escolha_strat == "3":
+                        perfil.recomendacoes.set_strategy(SurpriseMeStrategy())
+                    else:
+                        print("Opção inválida.")
+                    time.sleep(1.5)
+                elif escolha_rec == "3":
+                    break
+                else:
+                    print("Opção inválida.")
+                    time.sleep(1)
+
 
         elif opcao == "4":
             limpar_tela()
