@@ -52,6 +52,10 @@ python main.py
 <!-- - ****: -->
 
 ---
+## 👤 **Padrões comportamentais**
+- **Observer**: Criei para ele um novo arquivo. Ele é um padrão ideal para situações em que uma mudança de estado em um objeto deva notificar e atualizar automaticamente outros objetos dependentes. Ele foi aplicado no sistema de gerenciamento de planos de assinatura. Quando um usuário (que é o sujeito) muda o Plano, os objetos (como o StreamingSession, por exemplo) e a BandaLarga vão ser automaticamente modificados e podem reagir às mudanças feitas.
+- **Strategy**: Esse padrão permite que se possa definir uma família de algoritmos, encaplusar cada um deles e torná-los intercambiáveis. Aqui, ele era perfeito para o sistema de recomendações, já que ao invés de se ter uma única lógica de recomendação, a gente criou estratégias diferentes (baseada no gênero, tendências, ou até mesmo aleatória) que podem ser trocadas, dando mais flexibilidade ao sistema e ao usuário.
+---
 
 ## 🏗️ **Estrutura de Projeto**
 
