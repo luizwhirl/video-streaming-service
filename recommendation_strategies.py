@@ -6,9 +6,9 @@ from collections import Counter
 
 class RecommendationStrategy(ABC):
     """
-    A interface da Estratégia declara operações comuns a todas as versões
+    a interface da Estratégia declara operações comuns a todas as versões
     suportadas de algum algoritmo. O Contexto usa esta interface para chamar
-    o algoritmo definido pelas Estratégias Concretas.
+    o algoritmo definido pelas Estratégias Concretas
     """
     @abstractmethod
     def recommend(self, perfil, catalogo_completo, num_recomendacoes=5):
@@ -16,7 +16,7 @@ class RecommendationStrategy(ABC):
 
 class GenreBasedStrategy(RecommendationStrategy):
     """
-    Implementa a recomendação baseada nos gêneros mais assistidos pelo usuário.
+    implementa a recomendação baseada nos gêneros mais assistidos pelo usuário
     """
     def recommend(self, perfil, catalogo_completo, num_recomendacoes=5):
         print("Recomendações com base nos seus gêneros favoritos:\n")
@@ -54,7 +54,7 @@ class GenreBasedStrategy(RecommendationStrategy):
 
 class TrendingStrategy(RecommendationStrategy):
     """
-    Implementa a recomendação baseada em conteúdos populares (simulado).
+    implementa a recomendação baseada em conteúdos populares (simulado).
     """
     def recommend(self, perfil, catalogo_completo, num_recomendacoes=5):
         print("Recomendações com base no que está em alta:\n")
@@ -81,14 +81,14 @@ class TrendingStrategy(RecommendationStrategy):
 
 class SurpriseMeStrategy(RecommendationStrategy):
     """
-    Implementa uma recomendação aleatória para descobrir novos conteúdos.
+    implementa uma recomendação aleatória para descobrir novos conteúdos.
     """
     def recommend(self, perfil, catalogo_completo, num_recomendacoes=5):
         print("Surpreenda-se! Aqui estão algumas sugestões aleatórias para você:\n")
 
-        if not catalogo_completo.midias:
-            print("O catálogo está vazio no momento.")
-            return
+        # if not catalogo_completo.midias:
+        #     print("O catálogo está vazio no momento.")
+        #     return
 
         titulos_assistidos = {midia.titulo for midia in perfil.historico.historico}
         

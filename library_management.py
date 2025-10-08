@@ -10,6 +10,7 @@ import datetime
 from ads_management import realizar_exibicao_anuncio, redefinir_limite_diario
 from rating_and_reviews import Avaliacoes 
 import json 
+from player_states import Player # Importa o novo Player
 
 class ConjuntoMidias:
     # referente a varias midias
@@ -67,9 +68,8 @@ class Midia(ABC):
             status = "❌ Não Assistido"
         return status
 
-    # a função agora recebe o perfil para registrar o último conteúdo assistido
+    # MÉTODO REATORADO COM O PADRÃO STATE
     def assistir(self, usuario, perfil):
-        reviews_globais = Avaliacoes()
         usuario.conteudos_vistos += 1
         if usuario.plano.limite_diario < usuario.conteudos_vistos:
             print("Limite diário de visualizações atingido. Assista um anúncio para redefinir esse limite.")
@@ -85,66 +85,15 @@ class Midia(ABC):
             else:
                 return 
 
-        while True:
-            limpar_tela()
-            titulo = self.titulo.strip()
-            titulo_centralizado = titulo.center(24)
+        # Atualiza o status da mídia
+        self.assistido = True
+        self.ultima_exibicao = datetime.datetime.now()
+        perfil.ultimo_conteudo_assistido = self.titulo
 
-            self.assistido = True
-            self.ultima_exibicao = datetime.datetime.now()
-            perfil.ultimo_conteudo_assistido = self.titulo
+        # Cria e executa o Player, que agora gerencia seus próprios estados
+        player = Player(self, usuario, perfil)
+        player.executar()
 
-            usuario.otimizacao_banda_larga.ajustar_qualidade(usuario)
-            usuario.otimizacao_banda_larga.exibir_configuracoes_qualidade()
-        
-            print()
-
-            print("░▀▄░░▄▀")
-            print("▄▄▄██▄▄▄▄▄")
-            print("█▒░▒░▒░█▀█ Assistindo:")
-            print(f"█░▒░▒░▒█▀█ {titulo_centralizado} ")
-            print("█▄▄▄▄▄▄███═════════════════════")
-            print()
-            
-            if usuario.plano.nome != "Premium":
-                anuncio = realizar_exibicao_anuncio(usuario)
-                if anuncio is True:
-                    print("Pressione Enter para continuar.")
-                    continue
-            else:
-                input("Pressione Enter para pausar.")
-                limpar_tela()
-
-            print("Conteúdo pausado. O que deseja fazer?")
-            escolha = input(
-                "1. Continuar assistindo\n"
-                "2. Mudar a qualidade de reprodução\n"
-                "3. Ver avaliações deste conteúdo\n"
-                "4. Parar de assistir\n"
-                "Escolha uma opção: "
-            ).strip()
-
-            if escolha == "1":
-                print("Retomando...")
-                time.sleep(1)
-                continue
-            elif escolha == "2":
-                usuario.otimizacao_banda_larga.mudar_qualidade(usuario)  
-                
-            elif escolha == "3":
-                limpar_tela()
-                print(f"Exibindo avaliações para: {self.titulo}\n")
-                reviews_globais.mostrar_avaliacoes_por_id(self.id_midia)
-                input("\nPressione Enter para voltar...")
-
-            elif escolha == "4":
-                print(f"\nVocê parou de assistir {self.titulo}.")
-                print("Obrigado por assistir!")
-                time.sleep(1.5)
-                limpar_tela()
-                break
-            else:
-                print("Opção inválida.")
 
     def assistir_convidado(self):
         limpar_tela()

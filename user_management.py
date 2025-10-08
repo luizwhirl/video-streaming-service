@@ -461,5 +461,5 @@ class Plano:
         elif nome == "Premium":
             self.plano_premium()
         
-        # Notifica os observadores sobre a mudança de estado
+        # notifica os observadores sobre a mudança de estado
         self.usuario.notify()
