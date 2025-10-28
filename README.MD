@@ -59,9 +59,11 @@ python main.py
 ---
 
 ## 🎢 **Padrões estruturais**
+- **Decorator**: Pelo fato do sistema ter diferentes tipos de mídias o decorator permite adicionar novas responsabilidades ou características a objetos dinamicamente, como se estivesse os embrulhando em classes decoradoras.
+<!-- - **Adapter**: A função todas_as_mídias() carrega dados de um json, que tem uma estrutura específica (tipo "título", "gênero"). Esse novo padrão vai permitir que o sistema trabalhe com outras fontes de dados que possuam interfaces incompatíveis.
+- **Facade**: Esse rapazinho fornece uma interface unificada e simplificada para um conjunto complexo de interfaces em um subsistema.
 <!-- - ****: -->
-<!-- - ****: -->
-<!-- - ****: -->
+
 ---
 ## 🏗️ **Estrutura de Projeto**
 
