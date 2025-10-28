@@ -11,6 +11,7 @@ from ads_management import realizar_exibicao_anuncio, redefinir_limite_diario
 from rating_and_reviews import Avaliacoes 
 import json 
 from player_states import Player # Importa o novo Player
+from typing import List, Dict, Any # Adicionado para type hinting
 
 class ConjuntoMidias:
     # referente a varias midias
@@ -53,6 +54,7 @@ class Midia(ABC):
         self.tempo_duracao = tempo_duracao
         self.assistido = False
         self.ultima_exibicao = None
+        self.recursos = [] # NOVO: Adicionado para o padrão Decorator
         
     @abstractmethod
     def exibir_informacoes(self):
@@ -129,6 +131,11 @@ class Filme(Midia):
         print(f"║ Classificação: {self.classificacao:<32}║")
         print(f"║ Duração: {self.tempo_duracao} min{'':<31}║")
         print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        # NOVO: Bloco do Decorator
+        if self.recursos:
+            print("╠" + "┈" * 50 + "╣")
+            for recurso in self.recursos:
+                print(f"║ ℹ️  Recurso: {recurso:<35}║")
         print("╚" + "═" * 50 + "╝")
 
 class Serie(Midia):
@@ -149,6 +156,11 @@ class Serie(Midia):
         print(f"║ Episódios: {self.episodios:<40}║")
         print(f"║ Temporadas: {self.temporadas:<38}║")
         print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        # NOVO: Bloco do Decorator
+        if self.recursos:
+            print("╠" + "┈" * 50 + "╣")
+            for recurso in self.recursos:
+                print(f"║ ℹ️  Recurso: {recurso:<35}║")
         print("╚" + "═" * 50 + "╝")
 
 class Documentario(Midia):
@@ -165,6 +177,11 @@ class Documentario(Midia):
         print(f"║ Classificação: {self.classificacao:<32}║")
         print(f"║ Duração: {self.tempo_duracao} min{'':<31}║")
         print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        # NOVO: Bloco do Decorator
+        if self.recursos:
+            print("╠" + "┈" * 50 + "╣")
+            for recurso in self.recursos:
+                print(f"║ ℹ️  Recurso: {recurso:<35}║")
         print("╚" + "═" * 50 + "╝")
 
 class Novela(Midia):
@@ -181,6 +198,11 @@ class Novela(Midia):
         print(f"║ Classificação: {self.classificacao:<32}║")
         print(f"║ Duração: {self.tempo_duracao} min{'':<31}║")
         print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        # NOVO: Bloco do Decorator
+        if self.recursos:
+            print("╠" + "┈" * 50 + "╣")
+            for recurso in self.recursos:
+                print(f"║ ℹ️  Recurso: {recurso:<35}║")
         print("╚" + "═" * 50 + "╝")
 
 class Anime(Midia):
@@ -201,7 +223,86 @@ class Anime(Midia):
         print(f"║ Episódios: {self.episodios:<40}║")
         print(f"║ Temporadas: {self.temporadas:<38}║")
         print(f"║ Status: {self.configurar_visualizacao()} {'':<31}║")
+        # NOVO: Bloco do Decorator
+        if self.recursos:
+            print("╠" + "┈" * 50 + "╣")
+            for recurso in self.recursos:
+                print(f"║ ℹ️  Recurso: {recurso:<35}║")
         print("╚" + "═" * 50 + "╝")
+
+# ==================================================================
+# NOVO: PADRÃO DECORATOR
+# ==================================================================
+
+class MidiaDecorator(Midia, ABC):
+    """
+    A classe Decorator base segue a mesma interface que os outros
+    componentes. O propósito principal desta classe é definir a
+    interface de "embrulho" (wrapping) para todos os decoradores concretos.
+    A implementação padrão da lógica de "embrulho" pode incluir um
+    campo para armazenar um componente "embrulhado" e os meios
+    para inicializá-lo.
+    """
+
+    def __init__(self, midia_componente: Midia):
+        # O decorator "finge" ser uma Mídia, mas na verdade
+        # ele apenas envolve o componente.
+        self._componente = midia_componente
+        # Copia os recursos do componente para que possam ser adicionados
+        self.recursos = self._componente.recursos
+
+    def __getattr__(self, name):
+        """
+        Delega todos os atributos e métodos não substituídos
+        para o objeto componente "embrulhado".
+        """
+        return getattr(self._componente, name)
+
+    @abstractmethod
+    def exibir_informacoes(self):
+        """
+        O Decorator deve implementar a interface Midia.
+        A forma mais simples é delegar ao componente.
+        (Os decoradores concretos modificarão esse comportamento)
+        """
+        self._componente.exibir_informacoes()
+
+
+class AudioDescricaoDecorator(MidiaDecorator):
+    """
+    Decorator Concreto que adiciona Audiodescrição.
+    """
+    def __init__(self, midia_componente: Midia):
+        super().__init__(midia_componente)
+        # A "decoração" acontece aqui:
+        if "Audiodescrição" not in self.recursos:
+            self.recursos.append("Audiodescrição")
+
+    def exibir_informacoes(self):
+        # Como as classes de Mídia (Filme, Serie) já foram
+        # modificadas para ler 'self.recursos', este método
+        # só precisa delegar a chamada. O componente fará o resto.
+        self._componente.exibir_informacoes()
+
+
+class DublagemDecorator(MidiaDecorator):
+    """
+    Decorator Concreto que adiciona Dublagem.
+    """
+    def __init__(self, midia_componente: Midia):
+        super().__init__(midia_componente)
+        # A "decoração" acontece aqui:
+        if "Dublagem (PT-BR)" not in self.recursos:
+            self.recursos.append("Dublagem (PT-BR)")
+
+    def exibir_informacoes(self):
+        # Delega a chamada.
+        self._componente.exibir_informacoes()
+
+# ==================================================================
+# FIM DO PADRÃO DECORATOR
+# ==================================================================
+
 
 # FACTORY 
 # essa classe centraliza a lógica de criação de objetos de mídia
@@ -226,27 +327,125 @@ class MidiaFactory:
             raise ValueError(f"Tipo de mídia desconhecido: {tipo}")
 
 
+# ==================================================================
+# NOVO: PADRÃO ADAPTER
+# ==================================================================
+
+def _carregar_dados_externos_simulados() -> List[Dict[str, Any]]:
+    """
+    Simula a obtenção de dados de uma API externa (ex: XML, ou JSON com
+    uma estrutura diferente). Note que as chaves estão em inglês
+    e são diferentes das esperadas pelo nosso sistema.
+    """
+    print("Carregando dados de uma fonte externa simulada...")
+    return [
+        {
+            "ID": "e101",
+            "Title": "The Art of Programming",
+            "Type": "documentario",
+            "Genre": "Tecnologia",
+            "Rating": "L", # 'L' para "Livre"
+            "Runtime": 88
+        },
+        {
+            "ID": "e202",
+            "Title": "Cyber Detectives",
+            "Type": "serie",
+            "Genre": "Ficção Científica",
+            "Rating": "14+",
+            "Runtime": 45, # Duração por episódio
+            "Eps": 10,
+            "Seasons": 1
+        }
+    ]
+
+class ExternalMediaAdapter:
+    """
+    A classe Adapter "traduz" a interface de um objeto (dados externos)
+    para a interface que o cliente (MidiaFactory) espera.
+    """
+    def __init__(self, external_data: Dict[str, Any]):
+        self._external_data = external_data
+
+    def get_dados_adaptados(self) -> Dict[str, Any]:
+        """
+        Realiza a "tradução" (mapeamento) dos dados externos para
+        o formato interno esperado pela MidiaFactory.
+        """
+        dados_adaptados = {
+            "id": self._external_data.get("ID"),
+            "titulo": self._external_data.get("Title"),
+            "tipo": self._external_data.get("Type"),
+            "genero": self._external_data.get("Genre"),
+            "classificacao": self._external_data.get("Rating", "L"),
+            "tempo_duracao": self._external_data.get("Runtime"),
+            "episodios": self._external_data.get("Eps", 0),
+            "temporadas": self._external_data.get("Seasons", 0)
+        }
+        return dados_adaptados
+
+# ==================================================================
+# FIM DO PADRÃO ADAPTER
+# ==================================================================
+
+
 def todas_as_midias():
     midias = []
+    
+    # --- FONTE DE DADOS 1: JSON (Sistema Interno) ---
     try:
         with open('midias.json', 'r', encoding='utf-8') as f:
             dados_midias = json.load(f)
 
+        print("Carregando mídias do 'midias.json'...")
         for item in dados_midias:
             try:
+                # 1. Cria a mídia usando a Factory
                 midia_obj = MidiaFactory.criar_midia(item)
+                
+                # 2. NOVO: Aplica o padrão Decorator (Exemplo)
+                if item["id"] == "f001": # Ex: O Poderoso Chefão
+                    midia_obj = AudioDescricaoDecorator(midia_obj)
+                
+                if item["id"] == "s001": # Ex: Stranger Things
+                    midia_obj = DublagemDecorator(midia_obj)
+                    midia_obj = AudioDescricaoDecorator(midia_obj) # Pode empilhar decoradores
+
                 midias.append(midia_obj)
+            
             except (ValueError, KeyError) as e:
                 print(f"Erro ao processar item de mídia: {item.get('titulo', 'sem título')}. Detalhes: {e}")
-        
-        return midias
-
+    
     except FileNotFoundError:
         print("Erro: O arquivo 'midias.json' não foi encontrado.")
-        return []
     except json.JSONDecodeError:
         print("Erro: O arquivo 'midias.json' possui um formato inválido.")
-        return []
+
+    
+    # --- FONTE DE DADOS 2: API Externa (Padrão Adapter) ---
+    dados_externos = _carregar_dados_externos_simulados()
+    for item_externo in dados_externos:
+        try:
+            # 1. Adapta a interface externa para a nossa interface
+            adapter = ExternalMediaAdapter(item_externo)
+            dados_adaptados = adapter.get_dados_adaptados()
+            
+            # 2. Usa a MESMA Factory com os dados adaptados
+            midia_obj_externa = MidiaFactory.criar_midia(dados_adaptados)
+            
+            # 3. (Opcional) Podemos decorar mídias externas também
+            if midia_obj_externa.id_midia == "e101":
+                midia_obj_externa = DublagemDecorator(midia_obj_externa)
+
+            midias.append(midia_obj_externa)
+        
+        except (ValueError, KeyError) as e:
+            print(f"Erro ao processar item de mídia externa: {item_externo.get('Title', 'sem título')}. Detalhes: {e}")
+
+    print("\nCatálogo completo carregado.")
+    time.sleep(0.5) # Pausa rápida para ver as mensagens de carregamento
+    return midias
+
 
 def obter_catalogo_do_perfil(perfil) -> ConjuntoMidias:
     if perfil.catalogo is None:
