@@ -58,6 +58,11 @@ python main.py
 - **State**: A implementação do padrão State agora permite que um objeto (que nesse caso aqui é o player de vídeo) mude seu comportamento quando seu estado interno muda. O player vai se comportar de maneira diferente se ele está: Tocando ou pausando. Esse padrão organiza essa lógica de uma forma límpa e extensível, o que elimina a necessidade de grandes blocos de if/elif.
 ---
 
+## 🎢 **Padrões estruturais**
+<!-- - ****: -->
+<!-- - ****: -->
+<!-- - ****: -->
+---
 ## 🏗️ **Estrutura de Projeto**
 
 ### 🏛️ **Classes:**
