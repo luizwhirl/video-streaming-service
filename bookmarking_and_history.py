@@ -55,7 +55,11 @@ class Marcar:
                 print("Conteúdo não marcado.")
                 
     def desmarcar_conteudo(self, midia):
-        self.marcados.remove(midia)
+        # MUDANÇA: Adicionado try...except caso a mídia não esteja na lista
+        try:
+            self.marcados.remove(midia)
+        except ValueError:
+            print(f"Erro: A mídia '{midia.titulo}' não estava na lista para desmarcar.")
 
     def listar_marcados(self):
         for midia in self.marcados:
@@ -69,7 +73,22 @@ def obter_catalogo_do_perfil(perfil):
         cat = ConjuntoMidias()
         midias = todas_as_midias()  # cria as instâncias UMA vez para este perfil
         if getattr(perfil, "controle_parental", False):
-            midias = [m for m in midias if int(str(m.classificacao).rstrip('+')) <= perfil.idade_limite]
+            # MUDANÇA: Adicionado try...except para a conversão da classificação
+            midias_filtradas = []
+            for m in midias:
+                try:
+                    classificacao_int = int(str(m.classificacao).rstrip('+'))
+                    if classificacao_int <= perfil.idade_limite:
+                        midias_filtradas.append(m)
+                except (ValueError, TypeError):
+                    # Se a classificação for 'L' (Livre) ou algo não numérico, tratamos como 0
+                    if str(m.classificacao).upper() == 'L':
+                         midias_filtradas.append(m)
+                    else:
+                        print(f"Aviso: Classificação inválida ('{m.classificacao}') para '{m.titulo}'. Tratando como restrito.")
+            
+            midias = midias_filtradas
+            
         cat.midias.extend(midias)
         perfil.catalogo = cat
     return perfil.catalogo
@@ -127,14 +146,21 @@ def bookmarking(usuario):
             if not escolha_conteudo:
                 break
 
-            if escolha_conteudo.isdigit():
-                indice = int(escolha_conteudo) - 1
-                if 0 <= indice < len(resultados):
-                    midia_selecionada = resultados[indice]
-                    perfil.marcar.marcar_conteudo(midia_selecionada)
-                    break
+            # MUDANÇA: Adicionado try...except para converter a escolha em inteiro
+            try:
+                if escolha_conteudo.isdigit():
+                    indice = int(escolha_conteudo) - 1
+                    if 0 <= indice < len(resultados):
+                        midia_selecionada = resultados[indice]
+                        perfil.marcar.marcar_conteudo(midia_selecionada)
+                        break
+                    else:
+                        print("Opção inválida.")
                 else:
-                    print("Opção inválida.")
+                    print("Entrada inválida. Digite um número.")
+            except ValueError:
+                 print("Entrada numérica inválida.")
+                 
     elif acao == "2":
         if not perfil.marcar.marcados:
             print("Nenhum conteúdo marcado.")
@@ -154,7 +180,7 @@ def bookmarking(usuario):
                 break
 
         if midia_para_desmarcar:
-            perfil.marcar.desmarcar_conteudo(midia_para_desmarcar)
+            perfil.marcar.desmarcar_conteudo(midia_para_desmarcar) # A exceção é tratada dentro do método
             print("Conteúdo desmarcado com sucesso.")
         else:
             print("Conteúdo não encontrado na lista de marcados.")

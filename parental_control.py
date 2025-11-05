@@ -62,10 +62,16 @@ def restringir_conteudo(usuario):
         print(f"{i}. {p.nome_perfil}")
 
     escolha = input("Digite o número do perfil a configurar: ")
-    if escolha.isdigit() and 1 <= int(escolha) <= len(perfis_aptos):
-        perfil = perfis_aptos[int(escolha) - 1]
-    else:
-        print("Opção inválida.")
+    
+    # MUDANÇA: Adicionado try...except para converter a escolha em inteiro
+    try:
+        if escolha.isdigit() and 1 <= int(escolha) <= len(perfis_aptos):
+            perfil = perfis_aptos[int(escolha) - 1]
+        else:
+            print("Opção inválida.")
+            return None
+    except ValueError:
+        print("Entrada inválida. Digite um número.")
         return None
 
     print("Deseja personalizar a restrição ou manter a restrição padrão?")
@@ -79,6 +85,10 @@ def restringir_conteudo(usuario):
         print("Restrição padrão aplicada: 10 anos")
     elif escolher == "2":
         personalizar = True
+    # MUDANÇA: Adicionado else para lidar com entrada inválida
+    else:
+        print("Opção inválida. Nenhuma restrição aplicada.")
+        personalizar = False # Evita que o bloco 'if personalizar is True' rode
 
     if personalizar is True:
 

@@ -20,13 +20,25 @@ class Recomendacoes:
         self.generos_assistidos.append(genero)
 
     def recomendar_conteudo(self, usuario, perfil):
-        from library_management import obter_catalogo_do_perfil
-        
-        if not usuario.plano.recomendacoes_personalizadas:
-            print("Recomendações personalizadas estão desativadas para o plano gratuito. Faça um upgrade no seu plano!")
-            return
+        # MUDANÇA: Adicionado try...except para todo o processo
+        try:
+            from library_management import obter_catalogo_do_perfil
             
-        catalogo_completo = obter_catalogo_do_perfil(perfil)
-        
-        # Delega a tarefa de recomendação para o objeto de estratégia atual
-        self._strategy.recommend(perfil, catalogo_completo)
+            if not usuario.plano.recomendacoes_personalizadas:
+                print("Recomendações personalizadas estão desativadas para o plano gratuito. Faça um upgrade no seu plano!")
+                return
+                
+            catalogo_completo = obter_catalogo_do_perfil(perfil)
+            
+            # Delega a tarefa de recomendação para o objeto de estratégia atual
+            if self._strategy:
+                self._strategy.recommend(perfil, catalogo_completo)
+            else:
+                print("Erro: Nenhuma estratégia de recomendação definida.")
+                
+        except ImportError:
+            print("Erro ao carregar o módulo de biblioteca. Recomendações indisponíveis.")
+        except AttributeError as e:
+            print(f"Erro ao acessar dados do usuário ou perfil: {e}")
+        except Exception as e:
+            print(f"Erro inesperado ao gerar recomendações: {e}")

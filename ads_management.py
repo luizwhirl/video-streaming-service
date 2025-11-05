@@ -20,7 +20,13 @@ class GerenciarAnuncio:
         print("Pressione Enter para pausar.")
         exibido = False
         parar = threading.Event()
-        threading.Thread(target=lambda: (input(), parar.set()), daemon=True).start() # Espera pelo Enter
+        
+        # MUDANÇA: Adicionado try...except para o caso de falha ao iniciar a thread
+        try:
+            threading.Thread(target=lambda: (input(), parar.set()), daemon=True).start() # Espera pelo Enter
+        except RuntimeError as e:
+            print(f"Erro ao iniciar thread de anúncio: {e}. O anúncio pode não ser interrompível.")
+            
         cont = 0
         passo = 0.5            
         alvo = 30.0          
@@ -34,20 +40,27 @@ class GerenciarAnuncio:
                 mostrar = random.random() < chances.get(usuario.plano.nome, 0.0) # sorteia a chance de 'mostrar' ser true or false
 
                 if mostrar and banco_ads:
-                    ad = random.choice(banco_ads)
-                    limpar_tela()
-                    print("╔" + "═" * 50 + "╗")
-                    print(" 📢  ANÚNCIO ESPECIAL")
-                    print(f" Nome: {ad.nome:<41}")
-                    print(f" Produto: {ad.produto:<38}")
-                    print(f" Descrição: {ad.descricao:<35}")
-                    print("╚" + "═" * 50 + "╝\n")
-                    exibido = True
-                    for i in range(3, 0, -1):
-                        if parar.is_set(): break    
-                        print(f"O anúncio termina em {i}...", end="\r", flush=True)
-                        time.sleep(1)
-                    print("Anúncio encerrado. Pressione Enter para continuar...")
+                    # MUDANÇA: Adicionado try...except para random.choice em caso de lista vazia (embora já checado)
+                    try:
+                        ad = random.choice(banco_ads)
+                        limpar_tela()
+                        print("╔" + "═" * 50 + "╗")
+                        print(" 📢  ANÚNCIO ESPECIAL")
+                        print(f" Nome: {ad.nome:<41}")
+                        print(f" Produto: {ad.produto:<38}")
+                        print(f" Descrição: {ad.descricao:<35}")
+                        print("╚" + "═" * 50 + "╝\n")
+                        exibido = True
+                        for i in range(3, 0, -1):
+                            if parar.is_set(): break    
+                            print(f"O anúncio termina em {i}...", end="\r", flush=True)
+                            time.sleep(1)
+                        print("Anúncio encerrado. Pressione Enter para continuar...")
+                    except IndexError:
+                        print("Erro ao selecionar anúncio (banco vazio).")
+                    # MUDANÇA: Adicionada captura genérica para outras falhas no loop do anúncio
+                    except Exception as e:
+                        print(f"Erro inesperado durante exibição de anúncio: {e}")
                 cont = 0.0
         return exibido
 
@@ -66,6 +79,13 @@ def criar_banco_de_anuncios():
     except json.JSONDecodeError:
         print("Erro: O arquivo 'anuncios.json' possui um formato inválido.")
         return []
+    # MUDANÇA: Adicionada captura genérica para outros erros de I/O ou permissão
+    except IOError as e:
+        print(f"Erro de I/O ao ler 'anuncios.json': {e}")
+        return []
+    except Exception as e:
+        print(f"Erro inesperado ao criar banco de anúncios: {e}")
+        return []
 
 def realizar_exibicao_anuncio(usuario):
     banco_ads = criar_banco_de_anuncios()
@@ -79,12 +99,18 @@ def redefinir_limite_diario(usuario):
         usuario.conteudos_vistos = usuario.plano.limite_diario # Reseta para o limite sem assistir
         return
 
-    ad = random.choice(banco_ads)
-    limpar_tela()
-    print("╔" + "═" * 50 + "╗")
-    print(" 📢  ANÚNCIO ESPECIAL")
-    print(f" Nome: {ad.nome:<41}")
-    print(f" Produto: {ad.produto:<38}")
-    print(f" Descrição: {ad.descricao:<35}")
-    print("╚" + "═" * 50 + "╝\n")
-    usuario.conteudos_vistos = 0
+    # MUDANÇA: Adicionado try...except para random.choice
+    try:
+        ad = random.choice(banco_ads)
+        limpar_tela()
+        print("╔" + "═" * 50 + "╗")
+        print(" 📢  ANÚNCIO ESPECIAL")
+        print(f" Nome: {ad.nome:<41}")
+        print(f" Produto: {ad.produto:<38}")
+        print(f" Descrição: {ad.descricao:<35}")
+        print("╚" + "═" * 50 + "╝\n")
+        usuario.conteudos_vistos = 0
+    except IndexError:
+        print("Erro ao selecionar anúncio para redefinir limite (banco vazio).")
+    except Exception as e:
+        print(f"Erro inesperado ao redefinir limite: {e}")

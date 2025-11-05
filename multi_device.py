@@ -36,11 +36,15 @@ class StreamingSession(Observer):
         """
         Recebe notificação quando o plano do usuário muda para reavaliar o limite de telas.
         """
-        novo_limite = usuario.plano.maximo_telas_simultaneas
-        print(f"\n[Notificação de Streaming]: O plano de {usuario.nome} foi atualizado. Novo limite de telas simultâneas: {novo_limite}.")
-        sessoes_ativas = self.get_sessoes_ativas()
-        if sessoes_ativas > novo_limite:
-            print(f"AVISO: Você está excedendo o novo limite de telas. Ativas: {sessoes_ativas}, Limite: {novo_limite}.")
+        # MUDANÇA: Adicionado try...except para acessar atributos do usuário
+        try:
+            novo_limite = usuario.plano.maximo_telas_simultaneas
+            print(f"\n[Notificação de Streaming]: O plano de {usuario.nome} foi atualizado. Novo limite de telas simultâneas: {novo_limite}.")
+            sessoes_ativas = self.get_sessoes_ativas()
+            if sessoes_ativas > novo_limite:
+                print(f"AVISO: Você está excedendo o novo limite de telas. Ativas: {sessoes_ativas}, Limite: {novo_limite}.")
+        except AttributeError as e:
+            print(f"[Notificação de Streaming]: Erro ao ler atualização do usuário: {e}")
 
 
     # vamos contar quantas telas estão ativas
@@ -48,77 +52,126 @@ class StreamingSession(Observer):
         return sum(1 for d in self.dispositivos if d.streaming_content is not None)
 
     def adicionar_dispositivo(self):
-        nome = input("Digite o nome do dispositivo (ex: TV da Sala): ")
-        tipo = input("Digite o tipo do dispositivo (ex: Smart TV): ")
-        device_id = random.randint(1000, 9999)
-
-        while any(d.identificador == device_id for d in self.dispositivos):
+        # MUDANÇA: Adicionado try...except para geração de ID (improvável, mas seguro)
+        try:
+            nome = input("Digite o nome do dispositivo (ex: TV da Sala): ")
+            tipo = input("Digite o tipo do dispositivo (ex: Smart TV): ")
             device_id = random.randint(1000, 9999)
 
-        dispositivo = Device(nome, tipo, device_id)
-        self.dispositivos.append(dispositivo)
-        print(f"Dispositivo '{dispositivo.nome}' adicionado.")
+            while any(d.identificador == device_id for d in self.dispositivos):
+                device_id = random.randint(1000, 9999)
+
+            dispositivo = Device(nome, tipo, device_id)
+            self.dispositivos.append(dispositivo)
+            print(f"Dispositivo '{dispositivo.nome}' adicionado.")
+        except Exception as e:
+            print(f"Erro ao adicionar dispositivo: {e}")
 
     # aqui a lógica foi refeita para simular streaming simultâneo
     def iniciar_sessao(self):
-        sessoes_ativas = self.get_sessoes_ativas()
-        limite_telas = self.usuario.plano.maximo_telas_simultaneas
+        # MUDANÇA: Adicionado try...except para todo o processo
+        try:
+            sessoes_ativas = self.get_sessoes_ativas()
+            limite_telas = self.usuario.plano.maximo_telas_simultaneas
 
-        print(f"Telas em uso: {sessoes_ativas} de {limite_telas}")
+            print(f"Telas em uso: {sessoes_ativas} de {limite_telas}")
 
-        if sessoes_ativas >= limite_telas:
-            print("Limite de telas simultâneas atingido para o seu plano!")
+            if sessoes_ativas >= limite_telas:
+                print("Limite de telas simultâneas atingido para o seu plano!")
+                input("Pressione Enter para continuar...")
+                return
+
+            dispositivos_disponiveis = [d for d in self.dispositivos if not d.streaming_content]
+            if not dispositivos_disponiveis:
+                print("Todos os seus dispositivos já estão em uso.")
+                input("Pressione Enter para continuar...")
+                return
+
+            print("\nDispositivos disponíveis:")
+            for i, device in enumerate(dispositivos_disponiveis):
+                print(f"{i + 1}. {device.nome} ({device.tipo})")
+
+            escolha = input("Escolha o dispositivo para iniciar a transmissão (ou Enter para cancelar): ")
+            if not escolha:
+                return
+                
+            if not escolha.isdigit():
+                 print("Entrada inválida. Digite um número.")
+                 time.sleep(1)
+                 return
+
+            indice_escolha = int(escolha) - 1
+            if not (0 <= indice_escolha < len(dispositivos_disponiveis)):
+                print("Opção inválida.")
+                time.sleep(1)
+                return
+            
+            dispositivo_escolhido = dispositivos_disponiveis[indice_escolha]
+            
+            # simula a escolha de um conteúdo para assistir
+            midia = input("Digite o nome do filme/série para assistir neste dispositivo: ")
+            if not midia:
+                print("Nenhum conteúdo selecionado.")
+                return
+
+            dispositivo_escolhido.streaming_content = midia
+            print(f"\nIniciando a transmissão de '{midia}' em '{dispositivo_escolhido.nome}'.")
+            print(f"Telas em uso: {self.get_sessoes_ativas()} de {limite_telas}")
             input("Pressione Enter para continuar...")
-            return
+            
+        except ValueError:
+            print("Entrada numérica inválida.")
+            time.sleep(1)
+        except AttributeError as e:
+            print(f"Erro ao ler dados do plano do usuário: {e}")
+            time.sleep(1)
+        except Exception as e:
+            print(f"Erro inesperado ao iniciar sessão: {e}")
+            time.sleep(1)
 
-        dispositivos_disponiveis = [d for d in self.dispositivos if not d.streaming_content]
-        if not dispositivos_disponiveis:
-            print("Todos os seus dispositivos já estão em uso.")
-            input("Pressione Enter para continuar...")
-            return
-
-        print("\nDispositivos disponíveis:")
-        for i, device in enumerate(dispositivos_disponiveis):
-            print(f"{i + 1}. {device.nome} ({device.tipo})")
-
-        escolha = input("Escolha o dispositivo para iniciar a transmissão (ou Enter para cancelar): ")
-        if not escolha.isdigit() or not (1 <= int(escolha) <= len(dispositivos_disponiveis)):
-            return
-        
-        dispositivo_escolhido = dispositivos_disponiveis[int(escolha) - 1]
-        
-        # simula a escolha de um conteúdo para assistir
-        midia = input("Digite o nome do filme/série para assistir neste dispositivo: ")
-        if not midia:
-            print("Nenhum conteúdo selecionado.")
-            return
-
-        dispositivo_escolhido.streaming_content = midia
-        print(f"\nIniciando a transmissão de '{midia}' em '{dispositivo_escolhido.nome}'.")
-        print(f"Telas em uso: {self.get_sessoes_ativas()} de {limite_telas}")
-        input("Pressione Enter para continuar...")
 
     # a  lógicaaqui foi refeita para encerrar um stream específico
     def encerrar_sessao(self):
-        dispositivos_ativos = [d for d in self.dispositivos if d.streaming_content]
-        if not dispositivos_ativos:
-            print("Nenhuma transmissão ativa para encerrar.")
+        # MUDANÇA: Adicionado try...except para todo o processo
+        try:
+            dispositivos_ativos = [d for d in self.dispositivos if d.streaming_content]
+            if not dispositivos_ativos:
+                print("Nenhuma transmissão ativa para encerrar.")
+                input("Pressione Enter para continuar...")
+                return
+
+            print("\nSelecione a transmissão para encerrar:")
+            for i, device in enumerate(dispositivos_ativos):
+                print(f"{i + 1}. {device.nome} (assistindo '{device.streaming_content}')")
+            
+            escolha = input("Qual transmissão deseja encerrar? (ou Enter para cancelar): ")
+            if not escolha:
+                return
+                
+            if not escolha.isdigit():
+                 print("Entrada inválida. Digite um número.")
+                 time.sleep(1)
+                 return
+                 
+            indice_escolha = int(escolha) - 1
+            if not (0 <= indice_escolha < len(dispositivos_ativos)):
+                print("Opção inválida.")
+                time.sleep(1)
+                return
+
+            dispositivo_a_parar = dispositivos_ativos[indice_escolha]
+            print(f"\nEncerrando a transmissão em '{dispositivo_a_parar.nome}'.")
+            dispositivo_a_parar.streaming_content = None
+            print(f"Dispositivo agora está disponível. Telas em uso: {self.get_sessoes_ativas()}")
             input("Pressione Enter para continuar...")
-            return
+            
+        except ValueError:
+            print("Entrada numérica inválida.")
+            time.sleep(1)
+        except Exception as e:
+            print(f"Erro inesperado ao encerrar sessão: {e}")
+            time.sleep(1)
 
-        print("\nSelecione a transmissão para encerrar:")
-        for i, device in enumerate(dispositivos_ativos):
-            print(f"{i + 1}. {device.nome} (assistindo '{device.streaming_content}')")
-        
-        escolha = input("Qual transmissão deseja encerrar? (ou Enter para cancelar): ")
-        if not escolha.isdigit() or not (1 <= int(escolha) <= len(dispositivos_ativos)):
-            return
-
-        dispositivo_a_parar = dispositivos_ativos[int(escolha) - 1]
-        print(f"\nEncerrando a transmissão em '{dispositivo_a_parar.nome}'.")
-        dispositivo_a_parar.streaming_content = None
-        print(f"Dispositivo agora está disponível. Telas em uso: {self.get_sessoes_ativas()}")
-        input("Pressione Enter para continuar...")
 
     def remover_dispositivo(self):
         if not self.dispositivos:
@@ -152,38 +205,46 @@ class StreamingSession(Observer):
 
     def menu_de_streaming(self):
         while True:
-            limpar_tela()
-            sessoes_ativas = self.get_sessoes_ativas()
-            limite_telas = self.usuario.plano.maximo_telas_simultaneas
-            
-            print(f"\nConfigurações de Streaming ({sessoes_ativas}/{limite_telas} telas em uso):")
-            print("╔" + "═" * 50 + "╗")
-            print("1. Iniciar Transmissão em um Dispositivo")
-            print("2. Encerrar Transmissão")
-            print("3. Adicionar Dispositivo")
-            print("4. Remover Dispositivo")
-            print("5. Listar Dispositivos")
-            print("6. Sair")
-            print("╚" + "═" * 50 + "╝")
-            opcao = input("Escolha uma opção: ")
-
-            if opcao == "1":
-                self.iniciar_sessao()
-            elif opcao == "2":
-                self.encerrar_sessao()
-            elif opcao == "3":
-                self.adicionar_dispositivo()
-                time.sleep(1.5)
-            elif opcao == "4":
-                self.remover_dispositivo()
-                time.sleep(1.5)
-            elif opcao == "5":
+            # MUDANÇA: Adicionado try...except para proteger o menu
+            try:
                 limpar_tela()
-                self.listar_dispositivos()
-                input("Pressione Enter para continuar...")
-            elif opcao == "6":
-                print("Saindo do menu de streaming.")
-                break
-            else:
-                print("Opção inválida. Tente novamente.")
-                time.sleep(1)
+                sessoes_ativas = self.get_sessoes_ativas()
+                limite_telas = self.usuario.plano.maximo_telas_simultaneas
+                
+                print(f"\nConfigurações de Streaming ({sessoes_ativas}/{limite_telas} telas em uso):")
+                print("╔" + "═" * 50 + "╗")
+                print("1. Iniciar Transmissão em um Dispositivo")
+                print("2. Encerrar Transmissão")
+                print("3. Adicionar Dispositivo")
+                print("4. Remover Dispositivo")
+                print("5. Listar Dispositivos")
+                print("6. Sair")
+                print("╚" + "═" * 50 + "╝")
+                opcao = input("Escolha uma opção: ")
+
+                if opcao == "1":
+                    self.iniciar_sessao()
+                elif opcao == "2":
+                    self.encerrar_sessao()
+                elif opcao == "3":
+                    self.adicionar_dispositivo()
+                    time.sleep(1.5)
+                elif opcao == "4":
+                    self.remover_dispositivo()
+                    time.sleep(1.5)
+                elif opcao == "5":
+                    limpar_tela()
+                    self.listar_dispositivos()
+                    input("Pressione Enter para continuar...")
+                elif opcao == "6":
+                    print("Saindo do menu de streaming.")
+                    break
+                else:
+                    print("Opção inválida. Tente novamente.")
+                    time.sleep(1)
+            except AttributeError as e:
+                print(f"Erro ao ler dados do plano do usuário: {e}")
+                time.sleep(2)
+            except Exception as e:
+                print(f"Erro inesperado no menu de streaming: {e}")
+                time.sleep(2)
