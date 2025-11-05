@@ -24,6 +24,31 @@ python main.py
 - 🔒 **Controle parental** ✅ 
 - 👥 **Gerenciamento de usuário** ✅
 
+## 🛡️ **Tratamento de Exceções**
+
+Para aumentar a robustez e a estabilidade do aplicativo, diversas rotinas de tratamento de exceções foram implementadas. Elas garantem que o programa não pare inesperadamente e forneça feedback útil ao usuário.
+
+- **Validação de Entrada do Usuário (`ValueError`)**:
+  - Captura entradas numéricas inválidas (ex: letras em vez de números) em todos os menus, como na seleção de perfis (`parental_control.py`), escolha de mídias (`library_management.py`), definição de notas (`rating_and_reviews.py`) e menus de streaming (`multi_device.py`).
+  - Garante que a criação de usuários (`user_management.py`) falhe graciosamente se os dados não passarem nas regras de validação (gerado pelo `UserBuilder` e capturado em `main.py` e `predefinitions.py`).
+
+- **Erros de Leitura de Arquivo (`FileNotFoundError`, `json.JSONDecodeError`, `IOError`)**:
+  - Protege o carregamento dos catálogos de mídias (`midias.json`) e anúncios (`anuncios.json`). Se um arquivo não for encontrado, estiver corrompido (JSON inválido) ou houver um erro de permissão de leitura, o sistema informará o erro e continuará executando com um catálogo vazio, em vez de parar. (Implementado em `library_management.py` e `ads_management.py`).
+
+- **Erros de Lógica e Dados (`AttributeError`, `KeyError`, `IndexError`)**:
+  - Previne falhas caso um objeto (como `usuario` ou `perfil`) não tenha um atributo esperado (ex: `usuario.plano`). Isso é comum em funções de `update` do padrão Observer (`multi_device.py`, `bandwidth_optimization.py`) e durante a renderização de estados do player (`player_states.py`).
+  - Trata `KeyError` ao tentar acessar dados de um dicionário que podem não existir, como ao exibir avaliações (`rating_and_reviews.py`) ou ao definir restrições de idade (`parental_control.py`).
+  - Trata `IndexError` ao tentar selecionar um anúncio de uma lista vazia (`ads_management.py`).
+
+- **Erros de Sistema e Recursos (`OSError`, `RuntimeError`)**:
+  - Captura `OSError` na função `limpar_tela()` (`utility.py`), permitindo que o programa continue mesmo se não conseguir limpar o console.
+  - Captura `RuntimeError` que pode ocorrer ao iniciar uma `threading.Thread` no sistema de anúncios (`ads_management.py`).
+
+- **Interrupção do Usuário (`KeyboardInterrupt`)**:
+  - Captura `Ctrl+C` nos menus principais (`main.py`) para permitir uma saída limpa e amigável do programa, em vez de um traceback de erro.
+
+---
+
 ## 🛠️☑️ **Refatoração**
 
 ### ⚒️ **Mudanças significativas**
@@ -31,11 +56,6 @@ python main.py
 - **Melhoria da lógica de recomendação**: As recomendações do sistema agora sugerem títulos similares, e não só um gênero. Além de que, para aqueles que não têm histórico de exibição, ele recomenda os mais "populares".
 - **Avaliação**: O usuário, antes de fazer uma avaliação, tem que ter assistido a mídia em questão. Além disso, agora o sistema possui um ID para cada filme/série; ou seja, para cada título, há uma avaliação referente à ele. 
 - **Serviço de vários dispositivos**: Assim como num sistema real de streaming, o número de aparelhos simultâneos em execução é limitado. Se o número exceder, então nao é possível iniciar uma sessão nova. (Implementação meio inutil, mas meh).
-<!-- - ****: 
-- ****: 
-- ****: 
-- ****:  -->
-
 ### 🧮 **Mudanças menores**
 - **Transições**: O tempo de transição entre "telas" era muito grande e custoso. Esse mesmo tempo foi reduzido.
 - **Cancelar ação**: Apesar do sistema já dar a possibilidade de abortar determinada ação, ele nunca informa que você pode usar o enter para cancelar uma atividade. Esses prints foram implementados. 
@@ -46,24 +66,20 @@ python main.py
 --- 
 
 ## 🧱 **Padrões criacionais**
-- **Singleton**: Aplicado em ```Avaliacoes```, esse padrão garante que exista somente uma única instância dessa classe em toda a aplicação, o que funciona como um ponto de acesso global para as avaliações de conteúdo. Desse modo, qualquer parte do sistema que precisa registrar ou consultar uma avaliação vai estar interagindo com o mesmo e único repositório de dados, garantindo a consistência e integridade das informações das reviews. 
-- **Factory Method**: Aqui, esse padrão foi usado na classe ```MidiaFactory``` para centralizar a criação de tipos diferentes de midias. Em vez do código do cliente decidir qual classe instanciar, ele vai somente enviar os dados para a "fábrica", que analisa o "tipo" de mídia e retorna o objeto certo. Essa prática desacopla o sistema, o que facilita a adição de novos tipos de conteúdos no futuro, já que as mudanças ficam concentradas somente na fábrica. 
-- **Builder**:  Foi implementado na classe ```UserBuilder``` e serve para simplificar a criação de objetos ```User``` complexos. Ele permite construir o objeto passo a passo atráves de métodos encadeados, como ```com_nome()``` e ```com_email()```, sendo finalizada com o método ```build()```. Aqui nós separamos a lógica de construção do objeto final, o que torna a criação de novos usuários mais legível e mais organizada, especialmente quando é para se lidar com múltiplos atributos e regras de validação.
-<!-- - ****: -->
-
+- **Singleton**: Aplicado na classe `Avaliacoes` (`rating_and_reviews.py`), esse padrão garante que exista somente uma única instância dessa classe em toda a aplicação, o que funciona como um ponto de acesso global para as avaliações de conteúdo. Desse modo, qualquer parte do sistema que precisa registrar ou consultar uma avaliação vai estar interagindo com o mesmo e único repositório de dados, garantindo a consistência e integridade das informações das reviews. 
+- **Factory Method**: Usado na classe `MidiaFactory` (`library_management.py`) para centralizar a criação de tipos diferentes de midias (`Filme`, `Serie`, `Documentario`, etc.). Em vez do código do cliente decidir qual classe instanciar, ele vai somente enviar os dados para a "fábrica", que analisa o "tipo" de mídia e retorna o objeto certo. Essa prática desacopla o sistema, o que facilita a adição de novos tipos de conteúdos no futuro, já que as mudanças ficam concentradas somente na fábrica. 
+- **Builder**: Implementado na classe `UserBuilder` (`user_management.py`) para simplificar a criação de objetos `User` complexos. Ele permite construir o objeto passo a passo atráves de métodos encadeados, como `com_nome()` e `com_email()`, sendo finalizada com o método `build()`. Aqui nós separamos a lógica de construção do objeto final, o que torna a criação de novos usuários mais legível e mais organizada, especialmente quando é para se lidar com múltiplos atributos e regras de validação.
 ---
 ## 👤 **Padrões comportamentais**
-- **Observer**: Criei para ele um novo arquivo. Ele é um padrão ideal para situações em que uma mudança de estado em um objeto deva notificar e atualizar automaticamente outros objetos dependentes. Ele foi aplicado no sistema de gerenciamento de planos de assinatura. Quando um usuário (que é o sujeito) muda o Plano, os objetos (como o StreamingSession, por exemplo) e a BandaLarga vão ser automaticamente modificados e podem reagir às mudanças feitas.
-- **Strategy**: Esse padrão permite que se possa definir uma família de algoritmos, encaplusar cada um deles e torná-los intercambiáveis. Aqui, ele era perfeito para o sistema de recomendações, já que ao invés de se ter uma única lógica de recomendação, a gente criou estratégias diferentes (baseada no gênero, tendências, ou até mesmo aleatória) que podem ser trocadas, dando mais flexibilidade ao sistema e ao usuário.
-- **State**: A implementação do padrão State agora permite que um objeto (que nesse caso aqui é o player de vídeo) mude seu comportamento quando seu estado interno muda. O player vai se comportar de maneira diferente se ele está: Tocando ou pausando. Esse padrão organiza essa lógica de uma forma límpa e extensível, o que elimina a necessidade de grandes blocos de if/elif.
+- **Observer**: Usado para notificar mudanças de estado. A classe `User` (`user_management.py`) atua como o `Subject` (Sujeito). As classes `StreamingSession` (`multi_device.py`) e `BandaLarga` (`bandwidth_optimization.py`) atuam como `Observers` (Observadores). Quando um usuário muda seu plano de assinatura (ex: de "Gratuito" para "Premium"), o `User` notifica seus observadores, que reagem automaticamente para atualizar o limite de telas ou as configurações de qualidade de vídeo.
+- **Strategy**: Permite definir uma família de algoritmos e torná-los intercambiáveis. É usado pelo sistema de recomendações. A classe `Recomendacoes` (`recommendations.py`) é o "Contexto" que mantém uma referência a uma estratégia. As classes `GenreBasedStrategy`, `TrendingStrategy`, e `SurpriseMeStrategy` (`recommendation_strategies.py`) são as estratégias concretas, permitindo ao usuário alterar o tipo de recomendação que deseja receber em tempo de execução.
+- **State**: Permite que um objeto altere seu comportamento quando seu estado interno muda. Implementado no player de vídeo (`player_states.py`). A classe `Player` é o "Contexto" que delega o comportamento para objetos de estado concretos (`PausedState`, `PlayingState`, `StoppedState`), que implementam a interface comum `PlayerState`. Isso elimina grandes blocos condicionais no player e organiza a lógica de "play", "pause" e "stop" de forma limpa.
 ---
 
 ## 🎢 **Padrões estruturais**
-- **Decorator**: Pelo fato do sistema ter diferentes tipos de mídias o decorator permite adicionar novas responsabilidades ou características a objetos dinamicamente, como se estivesse os embrulhando em classes decoradoras.
-- **Adapter**: A função todas_as_mídias() carrega dados de um json, que tem uma estrutura específica (tipo "título", "gênero"). Esse novo padrão vai permitir que o sistema trabalhe com outras fontes de dados que possuam interfaces incompatíveis.
-- **Facade**: Esse rapazinho fornece uma interface unificada e simplificada para um conjunto complexo de interfaces em um subsistema.
-<!-- - ****: -->
-
+- **Decorator**: Permite adicionar novas responsabilidades a objetos dinamicamente. Usado para adicionar recursos extras às mídias (`library_management.py`). As classes `AudioDescricaoDecorator` e `DublagemDecorator` "embrulham" um objeto `Midia` (como `Filme` ou `Serie`) para adicionar novos recursos (como "Audiodescrição") sem alterar a classe original da mídia.
+- **Adapter**: Permite que interfaces incompatíveis trabalhem juntas. Usado em `library_management.py` com a classe `ExternalMediaAdapter`. Ela "traduz" dados de uma fonte externa simulada (que usa chaves como "Title" e "Runtime") para o formato que a `MidiaFactory` interna espera (com chaves como "titulo" e "tempo_duracao"), permitindo que o sistema carregue mídias de diferentes fontes de forma transparente.
+- **Facade**: Fornece uma interface unificada e simplificada para um conjunto complexo de interfaces em um subsistema. Funções como `Explorar_Conteudo` (`library_management.py`) e os menus em `main.py` atuam como Facades, escondendo a complexidade de buscar no catálogo, lidar com perfis, iniciar o player e registrar no histórico, tudo através de uma simples interface de menu.
 ---
 ## 🏗️ **Estrutura de Projeto**
 
@@ -89,6 +105,3 @@ python main.py
 - **Devices**: Template para a organização de streaming em multiplataforma;
 - **BandaLarga**: Template para a manuntenção da banda larga e a qualidade da transmissão enquanto a pessoa assiste;
 - **Avaliacoes**: Template para avaliações e reviews sobre um certo conteúdo em uma mini-rede social;
-
-
-
